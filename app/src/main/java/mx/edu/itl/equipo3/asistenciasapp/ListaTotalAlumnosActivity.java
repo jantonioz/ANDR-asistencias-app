@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,8 +42,9 @@ public class ListaTotalAlumnosActivity extends AppCompatActivity {
         listVTotales.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ListaTotalAlumnosActivity.this, nombres [ position ],
-                        Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent ( ListaTotalAlumnosActivity.this, DetallesAlumnoActivity.class );
+                intent.putExtra("noControl", nosControl [position]);
+                startActivity( intent );
             }
         });
     }

@@ -12,6 +12,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.Date;
+
+import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -19,10 +23,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final DB db = new DB(getApplicationContext());
+        db.clearDataBase();
     }
 
     public void btnListaTotalAlumnosClick ( View v ) {
-        // Invocar la ejecución del activity AcercaDe
         Intent intent = new Intent ( this, ListaTotalAlumnosActivity.class );
         startActivity( intent );
     }
