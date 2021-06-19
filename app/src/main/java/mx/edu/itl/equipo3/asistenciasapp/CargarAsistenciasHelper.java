@@ -1,5 +1,6 @@
 package mx.edu.itl.equipo3.asistenciasapp;
 
+import android.annotation.SuppressLint;
 import android.util.ArrayMap;
 
 import java.io.BufferedReader;
@@ -17,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CargarAsistenciasHelper {
+    @SuppressLint("SimpleDateFormat")
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
 
     public static ArrayList<InfoArchivo> getFiles(String path) {
@@ -47,8 +49,6 @@ public class CargarAsistenciasHelper {
                                 grupo_fecha[1]
                             )
                     );
-                    String fileOutput = dirFile.toString();
-                    System.out.println(fileOutput);
                 }
             }
         }
@@ -69,15 +69,6 @@ public class CargarAsistenciasHelper {
     }
 
     public static ArrayList<Alumno> obtenerAsistenciasPorAlumno ( ArrayList<InfoArchivo> archivos ) {
-        /*
-        TODO:
-          1. Leer todos los archivos x
-          2. Por cada archivo leer linea por linea y testear contra los formatos (regex) x
-          3. Obtener el numero de control y nombre -> crear alumno si no existe -> mantener arreglo de alumnos
-          4. Agregar asistencia al alumno
-          5. Regresar listado de alumnos
-         */
-
         return procesarArchivos ( archivos );
     }
 
@@ -119,7 +110,10 @@ public class CargarAsistenciasHelper {
                 if ( asistencia == null ) continue;
 
                 if ( alumnos.containsKey ( asistencia.getNoControl() ) ) {
-                    alumnos.get ( asistencia.getNoControl() ).getAsistencias().add ( asistencia );
+
+                    Objects.requireNonNull( alumnos.get( asistencia.getNoControl() ) )
+                            .getAsistencias().add ( asistencia );
+
                 } else {
                     Alumno alumnoNuevo =
                         new Alumno (
@@ -131,15 +125,10 @@ public class CargarAsistenciasHelper {
                     alumnos.put( alumnoNuevo.getNoControl(), alumnoNuevo );
                 }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    private final static String regexFromMatch =
-            "(?i).*\\s([A-Za-z]?[0-9]{9}[A-Za-z]?|[A-Za-z]?[0-9]{8}[A-Za-z]?)\\s*([\\w\\s]+)(to)?\\s*(everyone)?\\s*:\\s*(PRESENTE|JUSTIFICADO)$";
 
     private final static String regexMatch =
             "(?i).*\\s([A-Za-z]?[0-9]{9}[A-Za-z]?|[A-Za-z]?[0-9]{8}[A-Za-z]?)\\s*([\\w\\s]+)(to)?\\s*(everyone)?\\s*:\\s*(PRESENTE|JUSTIFICADO)$";
@@ -152,42 +141,33 @@ public class CargarAsistenciasHelper {
 
     private static Asistencia obtenerDatosAsistencia ( String linea, String fecha) {
         String posibleAsistencia = sanitizarLinea ( linea );
-        String regexOptimo = determinarRegex ( linea );
-        if ( !esAsistenciaValida ( posibleAsistencia, regexOptimo) ) return null;
+        if ( !esAsistenciaValida ( posibleAsistencia, regexMatch) ) return null;
 
+        return obtenerAsistenciaAlumno ( posibleAsistencia, fecha );
+    }
+
+    private static Asistencia obtenerAsistenciaAlumno ( String linea, String fecha ) {
         try {
-            Pattern pattern = Pattern.compile ( regexOptimo );
-            Matcher partes = pattern.matcher ( posibleAsistencia );
+            Pattern pattern = Pattern.compile ( regexMatch );
+            Matcher partes = pattern.matcher ( linea );
 
             if ( partes.find () ) {
                 String noControl = partes.group ( 1 );
                 String nombre =
                         Objects.requireNonNull( partes.group ( 2 ) )
-                        .replaceAll("to\\s*Everyone", "")
-                        .trim();
+                                .replaceAll("to\\s*Everyone", "")
+                                .trim();
+
                 String estado = Objects.requireNonNull( partes.group ( 5 ) ).toUpperCase();
 
 
-                return new Asistencia ( fecha, nombre, noControl, dateFormat.parse( fecha), estado );
+                return new Asistencia ( fecha, nombre, noControl, dateFormat.parse( fecha ), estado );
 
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private static String [] obtenerPartesConFrom ( String linea ) {
-        return new String[] {};
-    }
-
-    private static String [] obtenerPartesSinFrom ( String linea ) {
-        return new String[] {};
-    }
-
-    private static String determinarRegex ( String linea ) {
-        if ( linea.toLowerCase().contains ( "from") ) return regexFromMatch;
-        return regexMatch;
     }
 
     private static String sanitizarLinea ( String linea ) {
