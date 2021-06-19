@@ -1,6 +1,8 @@
 package mx.edu.itl.equipo3.asistenciasapp;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -19,4 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void btnOnClickLanzarCargarAsistencias ( View v ) {
+        Intent intent = new Intent ( this, CargarAsistenciasActivity.class );
+        startActivity ( intent );
+    }
 }
