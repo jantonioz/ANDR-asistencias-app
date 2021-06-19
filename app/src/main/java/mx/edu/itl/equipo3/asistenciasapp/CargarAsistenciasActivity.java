@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.codekidlabs.storagechooser.StorageChooser;
@@ -31,6 +32,10 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
 
     TextView textViewPath;
     TextView textViewTotalArchivos;
+
+    Button btnLimpiar;
+    Button btnCargar;
+
     RecyclerView cargaAsisRecyclerView;
 
     ArrayList<InfoArchivo> infoArchivoArrayList;
@@ -45,6 +50,9 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
 
         textViewPath = findViewById ( R.id.txtvCargarAsisPath );
         textViewTotalArchivos = findViewById ( R.id.txtvCargaAsisCount );
+
+        btnLimpiar = findViewById ( R.id.btnCargarAsisLimpiar );
+        btnCargar = findViewById ( R.id.btnCargarAsisCargar );
 
         cargaAsisRecyclerView = findViewById ( R.id.recyclerViewCargarAsis );
     }
@@ -71,6 +79,10 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
                 textViewPath.setText ( path );
                 infoArchivoArrayList = CargarAsistenciasHelper.getFiles ( path );
 
+                if ( infoArchivoArrayList.size() <= 0) return;
+
+                activarControles ();
+
                 adapter = new AdapterListaArchivos(infoArchivoArrayList);
 
                 cargaAsisRecyclerView.setAdapter ( adapter );
@@ -90,6 +102,7 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged ();
         textViewPath.setText ( "" );
         textViewTotalArchivos.setText ( "0 Archivos" );
+        desactivarControles ();
     }
 
     public void onClickCargar ( View v ) {
@@ -97,6 +110,19 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
             CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList );
 
         Log.d("ALUMNOS", String.valueOf(alumnos.size()));
+    }
+
+    private void activarControles () {
+        establecerControles ( true, true );
+    }
+
+    private void desactivarControles () {
+        establecerControles ( false, false );
+    }
+
+    private void establecerControles ( boolean setBtnLimpiarEnabled, boolean setBtnCargarEnabled ) {
+        btnLimpiar.setEnabled ( setBtnLimpiarEnabled );
+        btnCargar.setEnabled ( setBtnCargarEnabled );
     }
 }
 
