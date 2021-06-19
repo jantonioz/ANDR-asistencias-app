@@ -8,13 +8,33 @@ public class InfoArchivo {
     private String path;
     private String fullPath;
     private File archivo;
+    private String grupo;
+    private String fecha;
 
-    public InfoArchivo(String nombre, String pesoKB, String path, String fullPath, File archivo) {
+    public InfoArchivo(String nombre, String pesoKB, String path, String fullPath, File archivo, String grupo, String fecha) {
         this.nombre = nombre;
         this.pesoKB = pesoKB;
         this.path = path;
         this.fullPath = fullPath;
         this.archivo = archivo;
+        this.grupo = grupo;
+        this.fecha = fecha;
+    }
+
+    public String getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(String grupo) {
+        this.grupo = grupo;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 
     public File getArchivo() {
@@ -23,11 +43,6 @@ public class InfoArchivo {
 
     public void setArchivo(File archivo) {
         this.archivo = archivo;
-    }
-
-    public InfoArchivo(String nombre, String pesoKB) {
-        this.nombre = nombre;
-        this.pesoKB = pesoKB;
     }
 
     public String getPath() {

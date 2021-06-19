@@ -93,7 +93,10 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
     }
 
     public void onClickCargar ( View v ) {
+        ArrayList<Alumno> alumnos =
+            CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList );
 
+        Log.d("ALUMNOS", String.valueOf(alumnos.size()));
     }
 }
 
