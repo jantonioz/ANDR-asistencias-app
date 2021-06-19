@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -96,6 +98,13 @@ public class CargarAsistenciasHelper {
         });
 
 
+        alumnos.sort(new Comparator<Alumno>() {
+            @Override
+            public int compare(Alumno alumno, Alumno t1) {
+                return alumno.getNoControl().compareTo ( t1.getNoControl() );
+            }
+        });
+
         return alumnos;
     }
 
@@ -129,29 +138,59 @@ public class CargarAsistenciasHelper {
         }
     }
 
-    private static boolean esAsistenciaValida ( String linea ) {
-        boolean matches = linea.trim().toLowerCase().replace('_', ' ')
-                .matches ( "(?i).*From\\s*([0-9A-Za-z]{8,9})\\s*((\\w\\s?)*)\\s*t?o?\\s*(Everyone)?\\s*:\\s*(PRESENTE|JUSTIFICADO)$");
-        return matches;
+    private final static String regexFromMatch =
+            "(?i).*\\s([A-Za-z]?[0-9]{9}[A-Za-z]?|[A-Za-z]?[0-9]{8}[A-Za-z]?)\\s*([\\w\\s]+)(to)?\\s*(everyone)?\\s*:\\s*(PRESENTE|JUSTIFICADO)$";
+
+    private final static String regexMatch =
+            "(?i).*\\s([A-Za-z]?[0-9]{9}[A-Za-z]?|[A-Za-z]?[0-9]{8}[A-Za-z]?)\\s*([\\w\\s]+)(to)?\\s*(everyone)?\\s*:\\s*(PRESENTE|JUSTIFICADO)$";
+
+    private static boolean esAsistenciaValida ( String linea, String regex ) {
+        return linea
+                .toLowerCase()
+                .matches ( regex);
     }
 
     private static Asistencia obtenerDatosAsistencia ( String linea, String fecha) {
-        if ( !esAsistenciaValida ( linea) ) return null;
+        String posibleAsistencia = sanitizarLinea ( linea );
+        String regexOptimo = determinarRegex ( linea );
+        if ( !esAsistenciaValida ( posibleAsistencia, regexOptimo) ) return null;
 
-        Pattern pattern = Pattern.compile("(?i).*From\\s*([0-9A-Za-z]{8,9})\\s*((\\w\\s?)*)\\s*t?o?\\s*(Everyone)?\\s*:\\s*(PRESENTE|JUSTIFICADO)$");
-        Matcher partes = pattern.matcher ( linea );
+        try {
+            Pattern pattern = Pattern.compile ( regexOptimo );
+            Matcher partes = pattern.matcher ( posibleAsistencia );
 
-        if ( partes.find () ) {
-            String noControl = partes.group ( 1 );
-            String nombre = partes.group ( 2 );
-            String estado = partes.group ( 5 );
+            if ( partes.find () ) {
+                String noControl = partes.group ( 1 );
+                String nombre =
+                        Objects.requireNonNull( partes.group ( 2 ) )
+                        .replaceAll("to\\s*Everyone", "")
+                        .trim();
+                String estado = Objects.requireNonNull( partes.group ( 5 ) ).toUpperCase();
 
-            try {
+
                 return new Asistencia ( fecha, nombre, noControl, dateFormat.parse( fecha), estado );
-            } catch (ParseException e) {
-                e.printStackTrace();
+
             }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
         return null;
+    }
+
+    private static String [] obtenerPartesConFrom ( String linea ) {
+        return new String[] {};
+    }
+
+    private static String [] obtenerPartesSinFrom ( String linea ) {
+        return new String[] {};
+    }
+
+    private static String determinarRegex ( String linea ) {
+        if ( linea.toLowerCase().contains ( "from") ) return regexFromMatch;
+        return regexMatch;
+    }
+
+    private static String sanitizarLinea ( String linea ) {
+        return linea + "".replace('_', ' ').replace('.', ' ').trim();
     }
 }
