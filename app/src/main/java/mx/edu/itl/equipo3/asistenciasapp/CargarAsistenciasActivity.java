@@ -50,7 +50,7 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
     }
 
     public void onClickAtras ( View v ) {
-        finishActivity ( CARGAR_ASISTENCIAS_CODE );
+        finish ( );
     }
 
     public void onClickSelectFolder ( View v ) {
