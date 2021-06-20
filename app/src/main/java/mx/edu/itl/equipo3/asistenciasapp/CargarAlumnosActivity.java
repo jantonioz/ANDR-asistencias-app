@@ -7,22 +7,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.codekidlabs.storagechooser.StorageChooser;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
-
-public class CargarAsistenciasActivity extends AppCompatActivity {
-    public final static int CARGAR_ASISTENCIAS_CODE = 101;
+public class CargarAlumnosActivity extends AppCompatActivity {
 
     TextView textViewPath;
     TextView textViewTotalArchivos;
@@ -39,16 +33,17 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cargar_asistencias);
+        setContentView(R.layout.activity_carga_alumnos);
+
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        textViewPath = findViewById ( R.id.txtvCargarAsisPath);
-        textViewTotalArchivos = findViewById ( R.id.txtvCargarAsisCount);
+        textViewPath = findViewById ( R.id.txtvCargarAluPath);
+        textViewTotalArchivos = findViewById ( R.id.txtvCargarAluCount);
 
-        btnLimpiar = findViewById ( R.id.btnCargarAsisLimpiar);
-        btnCargar = findViewById ( R.id.btnCargarAsisCargar);
+        btnLimpiar = findViewById ( R.id.btnCargarAluLimpiar);
+        btnCargar = findViewById ( R.id.btnCargarAluCargar);
 
-        cargaAsisRecyclerView = findViewById ( R.id.recyclerViewCargarAsis);
+        cargaAsisRecyclerView = findViewById ( R.id.recyclerViewCargarAlu);
     }
 
     public void onClickAtras ( View v ) {
@@ -58,8 +53,7 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
     public void onClickSelectFolder ( View v ) {
         String path = this.getApplicationContext().getExternalFilesDir( Environment.DIRECTORY_DOCUMENTS ).getAbsolutePath();
         final StorageChooser chooser = new StorageChooser.Builder()
-                // Specify context of the dialog
-                .withActivity(CargarAsistenciasActivity.this)
+                .withActivity(CargarAlumnosActivity.this)
                 .withFragmentManager(getFragmentManager())
                 .withMemoryBar(true)
                 .allowCustomPath(true)
@@ -70,25 +64,23 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
             @Override
             public void onSelect(String path) {
-                textViewPath.setText ( path );
-                infoArchivoArrayList = CargarAsistenciasHelper.getFiles ( path );
+                textViewPath.setText(path);
+                infoArchivoArrayList = CargarAsistenciasHelper.getFiles(path);
 
-                if ( infoArchivoArrayList.size() <= 0) return;
+                if (infoArchivoArrayList.size() <= 0) return;
 
-                activarControles ();
+                activarControles();
 
                 adapter = new AdapterListaArchivos(infoArchivoArrayList);
 
-                cargaAsisRecyclerView.setAdapter ( adapter );
-                cargaAsisRecyclerView.setLayoutManager ( new LinearLayoutManager ( getApplicationContext() ) );
+                cargaAsisRecyclerView.setAdapter(adapter);
+                cargaAsisRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
                 String label = infoArchivoArrayList.size() + " Archivos";
-                textViewTotalArchivos.setText ( label );
-
+                textViewTotalArchivos.setText(label);
             }
         });
-
-            chooser.show();
+        chooser.show();
     }
 
     public void onClickLimpiar ( View v ) {
@@ -101,7 +93,7 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
 
     public void onClickCargar ( View v ) {
         ArrayList<Alumno> alumnos =
-            CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList );
+                CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList );
 
         Log.d("ALUMNOS", String.valueOf(alumnos.size()));
     }
@@ -119,4 +111,3 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         btnCargar.setEnabled ( setBtnCargarEnabled );
     }
 }
-

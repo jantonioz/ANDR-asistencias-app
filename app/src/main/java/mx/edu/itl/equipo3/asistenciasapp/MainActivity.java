@@ -35,4 +35,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent ( this, CargarAsistenciasActivity.class );
         startActivity ( intent );
     }
+
+    public void btnOnClickLanzarCargarAlumnos ( View v ) {
+        Intent intent = new Intent ( this, CargarAlumnosActivity.class );
+        startActivity ( intent );
+    }
 }
