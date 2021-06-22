@@ -1,5 +1,8 @@
 package mx.edu.itl.equipo3.asistenciasapp.Helpers;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,6 +16,7 @@ import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupos_ENUM;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
+import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 
 public class CargarAlumnosHelper {
 
@@ -85,5 +89,12 @@ public class CargarAlumnosHelper {
 
     private static boolean esAlumnoValido ( String linea, String regex ) {
         return linea.matches ( regex );
+    }
+
+    public static void guardarAlumnos(ArrayList<Alumno> arrayList, Context context){
+        DB db = new DB(context);
+        for (Alumno alu : arrayList ){
+            db.addAlumno(alu.getNoControl(), alu.getNombreCompleto());
+        }
     }
 }

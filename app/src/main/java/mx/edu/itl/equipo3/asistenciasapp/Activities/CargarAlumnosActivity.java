@@ -21,6 +21,7 @@ import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAlumnosHelper;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 import mx.edu.itl.equipo3.asistenciasapp.R;
+import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 
 public class CargarAlumnosActivity extends AppCompatActivity {
 
@@ -98,11 +99,14 @@ public class CargarAlumnosActivity extends AppCompatActivity {
     }
 
     public void onClickCargar ( View v ) {
+        DB db = new DB(getApplicationContext());
+        db.clearDataBase();
         if ( archivoAlumnos.isEmpty() ) return;
 
         ArrayList<Alumno> alumnos =
                 CargarAlumnosHelper.obtenerAlumnos ( archivoAlumnos.get ( 0 ) );
 
+        CargarAlumnosHelper.guardarAlumnos(alumnos, getApplicationContext());
         Log.d("ALUMNOS", String.valueOf(alumnos.size()));
     }
 
