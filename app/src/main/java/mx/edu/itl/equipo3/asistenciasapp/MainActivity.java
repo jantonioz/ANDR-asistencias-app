@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final DB db = new DB(getApplicationContext());
-        db.clearDataBase();
+        /*final DB db = new DB(getApplicationContext());
+        db.clearDataBase();*/
     }
 
     public void btnListaTotalAlumnosClick ( View v ) {
