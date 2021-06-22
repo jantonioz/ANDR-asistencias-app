@@ -13,9 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AsistenciasApp">
-        <activity android:name=".DetallesAlumnoActivity"></activity>
-        <activity android:name=".ListaTotalAlumnosActivity" />
-        <activity android:name=".CargarAsistenciasActivity">
+        <activity android:name=".Activities.DetallesAlumnoActivity"></activity>
+        <activity android:name=".Activities.ListaTotalAlumnosActivity" />
+        <activity android:name=".Activities.CargarAlumnosActivity" />
+        <activity android:name=".Activities.CargarAsistenciasActivity">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
 
@@ -26,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -5,7 +5,6 @@ import android.util.ArrayMap;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
@@ -17,9 +16,9 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mx.edu.itl.equipo3.asistenciasapp.Alumno;
-import mx.edu.itl.equipo3.asistenciasapp.Asistencia;
-import mx.edu.itl.equipo3.asistenciasapp.InfoArchivo;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 
 public class CargarAsistenciasHelper {
     @SuppressLint("SimpleDateFormat")
@@ -123,7 +122,7 @@ public class CargarAsistenciasHelper {
                         new Alumno (
                                 asistencia.getNoControl(),
                                 asistencia.getNombre(),
-                                asistencia.getNombre().split ( "" )
+                                asistencia.getNombre().split ( " " )
                         );
                     alumnoNuevo.getAsistencias().add ( asistencia );
                     alumnos.put( alumnoNuevo.getNoControl(), alumnoNuevo );

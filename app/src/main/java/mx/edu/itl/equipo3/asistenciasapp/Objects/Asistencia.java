@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Objects;
 
 import java.util.Date;
 

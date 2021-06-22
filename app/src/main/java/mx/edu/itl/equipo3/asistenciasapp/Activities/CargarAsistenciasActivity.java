@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,7 +16,11 @@ import com.codekidlabs.storagechooser.StorageChooser;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterListaArchivos;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAsistenciasHelper;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
+import mx.edu.itl.equipo3.asistenciasapp.R;
 
 
 public class CargarAsistenciasActivity extends AppCompatActivity {

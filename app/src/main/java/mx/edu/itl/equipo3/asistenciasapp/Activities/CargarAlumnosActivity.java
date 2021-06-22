@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,7 +16,11 @@ import com.codekidlabs.storagechooser.StorageChooser;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAsistenciasHelper;
+import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterListaArchivos;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
+import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAlumnosHelper;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
+import mx.edu.itl.equipo3.asistenciasapp.R;
 
 public class CargarAlumnosActivity extends AppCompatActivity {
 
@@ -28,14 +32,14 @@ public class CargarAlumnosActivity extends AppCompatActivity {
 
     RecyclerView cargaAsisRecyclerView;
 
-    ArrayList<InfoArchivo> infoArchivoArrayList;
+    ArrayList<InfoArchivo> archivoAlumnos;
 
     AdapterListaArchivos adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_carga_alumnos);
+        setContentView(R.layout.activity_cargar_alumnos);
 
         Objects.requireNonNull(getSupportActionBar()).hide();
 
@@ -60,25 +64,25 @@ public class CargarAlumnosActivity extends AppCompatActivity {
                 .withMemoryBar(true)
                 .allowCustomPath(true)
                 .withPredefinedPath(path)
-                .setType(StorageChooser.DIRECTORY_CHOOSER)
+                .setType(StorageChooser.FILE_PICKER)
                 .build();
 
         chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
             @Override
             public void onSelect(String path) {
                 textViewPath.setText(path);
-                infoArchivoArrayList = CargarAsistenciasHelper.getFiles(path);
+                archivoAlumnos = CargarAlumnosHelper.getFile(path);
 
-                if (infoArchivoArrayList.size() <= 0) return;
+                if (archivoAlumnos.size() <= 0) return;
 
                 activarControles();
 
-                adapter = new AdapterListaArchivos(infoArchivoArrayList);
+                adapter = new AdapterListaArchivos( archivoAlumnos );
 
                 cargaAsisRecyclerView.setAdapter(adapter);
                 cargaAsisRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-                String label = infoArchivoArrayList.size() + " Archivos";
+                String label = archivoAlumnos.size() + " Archivos";
                 textViewTotalArchivos.setText(label);
             }
         });
@@ -86,7 +90,7 @@ public class CargarAlumnosActivity extends AppCompatActivity {
     }
 
     public void onClickLimpiar ( View v ) {
-        infoArchivoArrayList.clear ();
+        archivoAlumnos.clear ();
         adapter.notifyDataSetChanged ();
         textViewPath.setText ( "" );
         textViewTotalArchivos.setText ( "0 Archivos" );
@@ -94,8 +98,10 @@ public class CargarAlumnosActivity extends AppCompatActivity {
     }
 
     public void onClickCargar ( View v ) {
+        if ( archivoAlumnos.isEmpty() ) return;
+
         ArrayList<Alumno> alumnos =
-                CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList );
+                CargarAlumnosHelper.obtenerAlumnos ( archivoAlumnos.get ( 0 ) );
 
         Log.d("ALUMNOS", String.valueOf(alumnos.size()));
     }

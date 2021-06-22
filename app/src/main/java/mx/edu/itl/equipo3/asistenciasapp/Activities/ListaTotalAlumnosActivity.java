@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,12 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.List;
+import mx.edu.itl.equipo3.asistenciasapp.R;
 
 public class ListaTotalAlumnosActivity extends AppCompatActivity {
 

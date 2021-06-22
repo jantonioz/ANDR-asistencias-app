@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-class AdapterListaArchivos extends RecyclerView.Adapter<AdapterListaArchivos.ViewHolder> {
+import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
+import mx.edu.itl.equipo3.asistenciasapp.R;
+
+public class AdapterListaArchivos extends RecyclerView.Adapter<AdapterListaArchivos.ViewHolder> {
 
     ArrayList<InfoArchivo> infoArchivoArrayList;
 
