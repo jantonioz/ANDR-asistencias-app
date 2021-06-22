@@ -2,11 +2,13 @@ package mx.edu.itl.equipo3.asistenciasapp.Helpers;
 
 import android.annotation.SuppressLint;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +20,9 @@ import java.util.regex.Pattern;
 
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia_STATUS;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupos_ENUM;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 
 public class CargarAsistenciasHelper {
@@ -32,6 +37,7 @@ public class CargarAsistenciasHelper {
 
         ArrayList<InfoArchivo> infoArchivos = new ArrayList<>();
 
+        try {
         assert dirFiles != null;
         if (dirFiles.length != 0) {
             for (File dirFile : dirFiles) {
@@ -48,14 +54,20 @@ public class CargarAsistenciasHelper {
                                 path,
                                 path + File.separator + dirFile.getName(),
                                 dirFile,
-                                grupo_fecha[0],
+                                getGrupoEnum ( grupo_fecha[0] ),
                                 grupo_fecha[1]
                             )
                     );
                 }
             }
+        }} catch (Exception e ) {
+            Log.d("A", "A");
         }
         return infoArchivos;
+    }
+
+    private static Grupos_ENUM getGrupoEnum(String grupo) {
+        return Grupos_ENUM.valueOf ( grupo );
     }
 
     private static String[] getFecha_GrupoDeNombreArchivo ( String nombre ) {
@@ -77,16 +89,45 @@ public class CargarAsistenciasHelper {
 
     private static ArrayList<Alumno> procesarArchivos(ArrayList<InfoArchivo> archivos) {
         ArrayMap<String, Alumno> alumnosArrayMap = new ArrayMap<>();
+        ArrayMap<String, Grupo> gruposMap = new ArrayMap<String, Grupo>();
+        ArrayList<Grupo> grupos = new ArrayList<>();
         ArrayList<Alumno> alumnos = new ArrayList<>();
 
 
         for (InfoArchivo archivo : archivos) {
+            String grupo = archivo.getGrupo().toString();
+
             procesarArchivo ( alumnosArrayMap, archivo );
+
+            if ( gruposMap.containsKey ( grupo ) )
+                gruposMap.put ( grupo,
+                        new Grupo (
+                                0,
+                                archivo.getGrupo().toString(),
+                                "Fernando Gil",
+                                gruposMap.get ( grupo ).getClases () + 1 )
+                        );
+            else
+                gruposMap.put ( grupo,
+                        new Grupo (
+                                0,
+                                archivo.getGrupo().toString(),
+                                "Fernando Gil",
+                                 1 )
+                );
         }
+
+        gruposMap.values ().forEach(new Consumer<Grupo>() {
+            @Override
+            public void accept(Grupo grupo) {
+                grupos.add(grupo);
+            }
+        });
 
         alumnosArrayMap.values ().forEach(new Consumer<Alumno>() {
             @Override
             public void accept(Alumno alumno) {
+                alumno.setGrupos ( grupos );
                 alumnos.add(alumno);
             }
         });
@@ -134,7 +175,7 @@ public class CargarAsistenciasHelper {
     }
 
     private final static String regexMatch =
-            "(?i).*\\s([A-Za-z]?[0-9]{9}[A-Za-z]?|[A-Za-z]?[0-9]{8}[A-Za-z]?)\\s*([\\w\\s]+)(to)?\\s*(everyone)?\\s*:\\s*(PRESENTE|JUSTIFICADO)$";
+            "(?i).*\\s([A-Za-z]?[0-9]{9}[A-Za-z]?|[A-Za-z]?[0-9]{8}[A-Za-z]?)\\s*([\\w\\s]+)(to)?\\s*(everyone)?\\s*:\\s*(PRES.*|JUS.*)$";
 
     private static boolean esAsistenciaValida ( String linea, String regex ) {
         return linea
@@ -161,7 +202,10 @@ public class CargarAsistenciasHelper {
                                 .replaceAll("to\\s*Everyone", "")
                                 .trim();
 
-                String estado = Objects.requireNonNull( partes.group ( 5 ) ).toUpperCase();
+                Asistencia_STATUS estado =
+                        Objects.requireNonNull( partes.group ( 5 ) )
+                                .toUpperCase()
+                                .contains ( "PRES") ? Asistencia_STATUS.PRESENTE : Asistencia_STATUS.JUSTIFICADO;
 
 
                 return new Asistencia ( fecha, nombre, noControl, dateFormat.parse( fecha ), estado );
@@ -174,6 +218,12 @@ public class CargarAsistenciasHelper {
     }
 
     private static String sanitizarLinea ( String linea ) {
-        return linea + "".replace('_', ' ').replace('.', ' ').trim();
+        return Normalizer.normalize(linea, Normalizer.Form.NFD)
+                .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                + "".replace('_', ' ').replace('.', ' ').trim();
+    }
+
+    public static void guardarAsistencias ( ArrayList<Asistencia> asistenciasArrayList ) {
+
     }
 }

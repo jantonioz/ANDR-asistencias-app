@@ -10,6 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupos_ENUM;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 
 public class CargarAlumnosHelper {
@@ -27,7 +29,7 @@ public class CargarAlumnosHelper {
                 path,
                 path + File.separator + fileDirectory.getName(),
                 fileDirectory,
-                "",
+                    Grupos_ENUM.NONE,
                 ""
             )
         );

@@ -7,7 +7,10 @@ public class Alumno {
     private String nombreCompleto;
     private String[] nombres;
 
+
+    private ArrayList<Grupo> grupos = new ArrayList<>();
     private ArrayList<Asistencia> asistencias = new ArrayList<>();
+
 
     public Alumno(String noControl, String nombreCompleto, String[] nombres) {
         this.noControl = noControl;
@@ -45,5 +48,13 @@ public class Alumno {
 
     public void setNombres(String[] nombres) {
         this.nombres = nombres;
+    }
+
+    public ArrayList<Grupo> getGrupos() {
+        return grupos;
+    }
+
+    public void setGrupos(ArrayList<Grupo> grupos) {
+        this.grupos = grupos;
     }
 }

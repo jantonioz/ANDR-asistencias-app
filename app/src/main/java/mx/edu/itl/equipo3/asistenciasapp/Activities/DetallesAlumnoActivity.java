@@ -72,7 +72,7 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolderDetalles holder, int position) {
             holder.fecha.setText(listaDetalles.get(position).getFecha());
-            holder.estatus.setText(listaDetalles.get(position).getStatus());
+            holder.estatus.setText(listaDetalles.get(position).getStatus().toString());
         }
 
         @Override

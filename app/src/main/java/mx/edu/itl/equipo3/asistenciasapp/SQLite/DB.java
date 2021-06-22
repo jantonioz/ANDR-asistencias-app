@@ -17,7 +17,7 @@ public class DB extends SQLiteOpenHelper {
     private static final String TABLE_ALUMNOS = "CREATE TABLE ALUMNOS " +
                                                 "(NOCONTROL VARCHAR PRIMARY KEY, NOMBRE VARCHAR)";
     private static final String TABLE_GRUPOS = "CREATE TABLE GRUPOS " +
-                                                "(ID INTEGER PRIMARY KEY AUTOINCREMENT, NOMBRE VARCHAR, MAESTRO VARCHAR)";
+                                                "(ID INTEGER PRIMARY KEY AUTOINCREMENT, NOMBRE VARCHAR, MAESTRO VARCHAR, TOTAL_CLASES INTEGER)";
     private static final String TABLE_ASISTENCIAS = "CREATE TABLE ASISTENCIAS " +
                                                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT, FECHASTR VARCHAR, ESTATUS VARCHAR, ID_GRUPO INTEGER, NOCONTROL_ALUMNO VARCHAR," +
                                                 "FOREIGN KEY(NOCONTROL_ALUMNO) REFERENCES ALUMNOS(NOCONTROL), FOREIGN KEY(ID_GRUPO) REFERENCES GRUPOS(ID), " +
@@ -58,10 +58,10 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
-    public void addGrupo(String nombre, String maestro) {
+    public void addGrupo(String nombre, String maestro, int clases) {
         SQLiteDatabase dbWrite = getWritableDatabase();
         if( dbWrite != null ) {
-            dbWrite.execSQL("INSERT INTO GRUPOS VALUES ('"+nombre+"','"+maestro+"')");
+            dbWrite.execSQL("INSERT INTO GRUPOS VALUES ('"+nombre+"','"+maestro+"'," + clases + ")");
             dbWrite.close();
         }
     }
