@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Helpers;
 
 import android.annotation.SuppressLint;
 import android.util.ArrayMap;
@@ -16,6 +16,10 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import mx.edu.itl.equipo3.asistenciasapp.Alumno;
+import mx.edu.itl.equipo3.asistenciasapp.Asistencia;
+import mx.edu.itl.equipo3.asistenciasapp.InfoArchivo;
 
 public class CargarAsistenciasHelper {
     @SuppressLint("SimpleDateFormat")
@@ -68,7 +72,7 @@ public class CargarAsistenciasHelper {
         return nombre.trim().toLowerCase().matches ( "(?i)[0-9]{4}-[0-9]{2}-[0-9]{2}\\s*(andr|tap|la2)-asistencia\\.txt$" );
     }
 
-    public static ArrayList<Alumno> obtenerAsistenciasPorAlumno ( ArrayList<InfoArchivo> archivos ) {
+    public static ArrayList<Alumno> obtenerAsistenciasPorAlumno (ArrayList<InfoArchivo> archivos ) {
         return procesarArchivos ( archivos );
     }
 
