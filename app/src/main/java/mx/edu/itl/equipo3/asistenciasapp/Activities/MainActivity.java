@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import mx.edu.itl.equipo3.asistenciasapp.R;
+import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 import teclag.c17130854.androlib.util.permisos.ChecadorDePermisos;
 import teclag.c17130854.androlib.util.permisos.PermisoApp;
 
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
         ChecadorDePermisos.checarPermisos ( this, permisosReq );
 
+        DB db = new DB(getApplicationContext());
+        db.clearDataBase();
     }
 
     public void btnOnClickLanzarCargarAsistencias ( View v ) {
@@ -47,6 +50,5 @@ public class MainActivity extends AppCompatActivity {
     }*/
 
 
-        /*final DB db = new DB(getApplicationContext());
-        db.clearDataBase();*/
+        /**/
 }

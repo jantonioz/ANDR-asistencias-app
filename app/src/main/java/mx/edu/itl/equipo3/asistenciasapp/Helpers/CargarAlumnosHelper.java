@@ -1,7 +1,6 @@
 package mx.edu.itl.equipo3.asistenciasapp.Helpers;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,8 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
-import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
-import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupos_ENUM;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.GrupoEnum;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 
@@ -33,7 +31,7 @@ public class CargarAlumnosHelper {
                 path,
                 path + File.separator + fileDirectory.getName(),
                 fileDirectory,
-                    Grupos_ENUM.NONE,
+                    GrupoEnum.NONE,
                 ""
             )
         );

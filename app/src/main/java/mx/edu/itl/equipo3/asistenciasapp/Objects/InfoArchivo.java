@@ -8,10 +8,10 @@ public class InfoArchivo {
     private String path;
     private String fullPath;
     private File archivo;
-    private Grupos_ENUM grupo;
+    private GrupoEnum grupo;
     private String fecha;
 
-    public InfoArchivo(String nombre, String pesoKB, String path, String fullPath, File archivo, Grupos_ENUM grupo, String fecha) {
+    public InfoArchivo(String nombre, String pesoKB, String path, String fullPath, File archivo, GrupoEnum grupo, String fecha) {
         this.nombre = nombre;
         this.pesoKB = pesoKB;
         this.path = path;
@@ -21,11 +21,11 @@ public class InfoArchivo {
         this.fecha = fecha;
     }
 
-    public Grupos_ENUM getGrupo() {
+    public GrupoEnum getGrupo() {
         return grupo;
     }
 
-    public void setGrupo(Grupos_ENUM grupo) {
+    public void setGrupo(GrupoEnum grupo) {
         this.grupo = grupo;
     }
 

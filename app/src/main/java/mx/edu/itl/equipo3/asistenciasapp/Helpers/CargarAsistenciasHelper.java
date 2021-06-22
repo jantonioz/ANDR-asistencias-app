@@ -21,9 +21,9 @@ import java.util.regex.Pattern;
 
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia;
-import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia_STATUS;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.AsistenciaStatus;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
-import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupos_ENUM;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.GrupoEnum;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 
@@ -54,7 +54,7 @@ public class CargarAsistenciasHelper {
                     }
 
                     String [] grupo_fecha = getFecha_GrupoDeNombreArchivo ( dirFile.getName() );
-                    Grupos_ENUM grupoEnum = getGrupoEnum ( grupo_fecha[0] );
+                    GrupoEnum grupoEnum = getGrupoEnum ( grupo_fecha[0] );
 
 
 
@@ -82,7 +82,7 @@ public class CargarAsistenciasHelper {
         ArrayList<Grupo> grupos = new ArrayList<>();
 
         for (InfoArchivo archivo : archivos ) {
-            Grupos_ENUM grupoEnum = archivo.getGrupo();
+            GrupoEnum grupoEnum = archivo.getGrupo();
 
 
             if ( gruposMap.containsKey ( grupoEnum.toString() ) )
@@ -113,12 +113,12 @@ public class CargarAsistenciasHelper {
         return grupos;
     }
 
-    private static Grupos_ENUM getGrupoEnum(String grupo) {
+    private static GrupoEnum getGrupoEnum(String grupo) {
         try {
-            Grupos_ENUM _grupo =  Grupos_ENUM.valueOf ( grupo );
+            GrupoEnum _grupo =  GrupoEnum.valueOf ( grupo );
             return _grupo;
         } catch (IllegalArgumentException e) {
-            return Grupos_ENUM.NONE;
+            return GrupoEnum.NONE;
         }
     }
 
@@ -174,7 +174,7 @@ public class CargarAsistenciasHelper {
             String linea;
 
             while ( ( linea = br.readLine() ) != null ) {
-                Asistencia asistencia = obtenerDatosAsistencia ( linea, archivo.getFecha() );
+                Asistencia asistencia = obtenerDatosAsistencia ( linea, archivo.getFecha(), archivo.getGrupo() );
 
                 if ( asistencia == null ) continue;
 
@@ -208,37 +208,35 @@ public class CargarAsistenciasHelper {
                 .matches ( regex);
     }
 
-    private static Asistencia obtenerDatosAsistencia ( String linea, String fecha) {
+    private static Asistencia obtenerDatosAsistencia ( String linea, String fecha, GrupoEnum grupo) {
         String posibleAsistencia = sanitizarLinea ( linea );
         if ( !esAsistenciaValida ( posibleAsistencia, regexMatch) ) return null;
 
-        return obtenerAsistenciaAlumno ( posibleAsistencia, fecha );
+        return obtenerAsistenciaAlumno ( posibleAsistencia, fecha, grupo );
     }
 
-    private static Asistencia obtenerAsistenciaAlumno ( String linea, String fecha ) {
-        try {
-            Pattern pattern = Pattern.compile ( regexMatch );
-            Matcher partes = pattern.matcher ( linea );
+    private static Asistencia obtenerAsistenciaAlumno ( String linea, String fecha, GrupoEnum grupo ) {
 
-            if ( partes.find () ) {
-                String noControl = partes.group ( 1 );
-                String nombre =
-                        Objects.requireNonNull( partes.group ( 2 ) )
-                                .replaceAll("to\\s*Everyone", "")
-                                .trim();
+        Pattern pattern = Pattern.compile ( regexMatch );
+        Matcher partes = pattern.matcher ( linea );
 
-                Asistencia_STATUS estado =
-                        Objects.requireNonNull( partes.group ( 5 ) )
-                                .toUpperCase()
-                                .contains ( "PRES") ? Asistencia_STATUS.PRESENTE : Asistencia_STATUS.JUSTIFICADO;
+        if ( partes.find () ) {
+            String noControl = partes.group ( 1 );
+            String nombre =
+                    Objects.requireNonNull( partes.group ( 2 ) )
+                            .replaceAll("to\\s*Everyone", "")
+                            .trim();
+
+            AsistenciaStatus estado =
+                    Objects.requireNonNull( partes.group ( 5 ) )
+                            .toUpperCase()
+                            .contains ( "PRES") ? AsistenciaStatus.PRESENTE : AsistenciaStatus.JUSTIFICADO;
 
 
-                return new Asistencia ( fecha, nombre, noControl, dateFormat.parse( fecha ), estado );
+            return new Asistencia ( fecha, nombre, noControl, estado, grupo );
 
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
+
         return null;
     }
 
@@ -248,20 +246,40 @@ public class CargarAsistenciasHelper {
                 + "".replace('_', ' ').replace('.', ' ').trim();
     }
 
-    public static void guardarAsistencias ( ArrayList<Asistencia> asistenciasArrayList ) {
+    public static void guardarAsistencias ( ArrayList<Alumno> alumnos, ArrayList<Grupo> grupos, Context context ) {
+        DB db = new DB ( context );
 
+        for ( Alumno alumno : alumnos ) {
+            for (Asistencia asistencia : alumno.getAsistencias()) {
+                Grupo grupo = obtenerGrupoPorNombre(grupos, asistencia.getGrupo().toString());
+                assert grupo != null;
+
+                db.addAsistencia(
+                        asistencia.getFecha(),
+                        asistencia.getStatus().toString(),
+                        grupo.getId(),
+                        asistencia.getNoControl()
+                );
+            }
+        }
+        ArrayList<Asistencia> selectAsistencias = db.getAsistencias("", -1);
+        return;
     }
 
-    public static void guardarGrupos ( ArrayList<Grupo> grupos, Context context ) {
+    private static Grupo obtenerGrupoPorNombre (ArrayList<Grupo> grupos, String nombre) {
+        for (Grupo grupo : grupos ) {
+            if ( grupo.getNombre().toUpperCase().equals ( nombre.toUpperCase() ) ) return grupo;
+        }
+        return null;
+    }
+
+    public static ArrayList<Grupo> guardarGrupos ( ArrayList<Grupo> grupos, Context context ) {
         DB db = new DB ( context );
 
         for ( Grupo grupo : grupos ) {
             db.addGrupo ( grupo.getNombre(), grupo.getProfe(), grupo.getClases() );
         }
 
-
-        ArrayList<Grupo> selectGrupos = db.getGrupos();
-
-        return;
+        return db.getGrupos();
     }
 }

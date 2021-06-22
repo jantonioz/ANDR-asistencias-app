@@ -6,15 +6,15 @@ public class Asistencia {
     private String fecha;
     private String nombre;
     private String noControl;
-    private Date fechaDate;
-    private Asistencia_STATUS status; // "PRESENTE" | "JUSTIFICADO"
+    private AsistenciaStatus status; // "PRESENTE" | "JUSTIFICADO"
+    private GrupoEnum grupo;
 
-    public Asistencia(String fecha, String nombre, String noControl, Date fechaDate, Asistencia_STATUS status) {
+    public Asistencia(String fecha, String nombre, String noControl, AsistenciaStatus status, GrupoEnum grupo) {
         this.fecha = fecha;
         this.nombre = nombre;
         this.noControl = noControl;
-        this.fechaDate = fechaDate;
         this.status = status;
+        this.grupo = grupo;
     }
 
     public String getNombre() {
@@ -41,19 +41,19 @@ public class Asistencia {
         this.fecha = fecha;
     }
 
-    public Date getFechaDate() {
-        return fechaDate;
-    }
-
-    public void setFechaDate(Date fechaDate) {
-        this.fechaDate = fechaDate;
-    }
-
-    public Asistencia_STATUS getStatus() {
+    public AsistenciaStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Asistencia_STATUS status) {
+    public void setStatus(AsistenciaStatus status) {
         this.status = status;
+    }
+
+    public GrupoEnum getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(GrupoEnum grupo) {
+        this.grupo = grupo;
     }
 }

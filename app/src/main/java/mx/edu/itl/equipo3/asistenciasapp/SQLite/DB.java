@@ -9,7 +9,9 @@ import java.util.ArrayList;
 
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.AsistenciaStatus;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.GrupoEnum;
 
 public class DB extends SQLiteOpenHelper {
 
@@ -64,7 +66,7 @@ public class DB extends SQLiteOpenHelper {
     public void addGrupo(String nombre, String maestro, int clases) {
         SQLiteDatabase dbWrite = getWritableDatabase();
         if( dbWrite != null ) {
-            dbWrite.execSQL("INSERT INTO GRUPOS (NOMBRE, MAESTRO, TOTAL_CLASES) VALUES ('"+nombre+"','"+maestro+"'," + clases + ")");
+            dbWrite.execSQL("INSERT OR IGNORE INTO GRUPOS (NOMBRE, MAESTRO, TOTAL_CLASES) VALUES ('"+nombre+"','"+maestro+"'," + clases + ")");
             dbWrite.close();
         }
     }
@@ -89,7 +91,9 @@ public class DB extends SQLiteOpenHelper {
     public void addAsistencia(String fechaStr, String estatus, int idGrupo, String noControl) {
         SQLiteDatabase dbWrite = getWritableDatabase();
         if( dbWrite != null ) {
-            dbWrite.execSQL("INSERT INTO ASISTENCIAS VALUES ('"+fechaStr+"','"+estatus+"','"+idGrupo+"','"+noControl+"')");
+            dbWrite.execSQL("INSERT OR IGNORE INTO ASISTENCIAS ( FECHASTR, ESTATUS, ID_GRUPO, NOCONTROL_ALUMNO) VALUES " +
+                    "('"+fechaStr+"','"+estatus+"',"+idGrupo+",'"+noControl+"') " +
+                    "ON CONFLICT DO NOTHING");
             dbWrite.close();
         }
     }
@@ -109,13 +113,43 @@ public class DB extends SQLiteOpenHelper {
 
     public ArrayList<Asistencia> getAsistencias (String noControl, int idGrupo) {
         SQLiteDatabase dbRead = getReadableDatabase();
-        Cursor cursor = dbRead.rawQuery("SELECT * FROM ASISTENCIAS WHERE NOCONTROL_ALUMNO = "+noControl+" AND ID_GRUPO = "+idGrupo, null);
+        Cursor cursor
+                = dbRead.rawQuery(
+                    "SELECT ASISTENCIAS.ID, ASISTENCIAS.FECHASTR, ALUMNOS.NOMBRE, ASISTENCIAS.NOCONTROL_ALUMNO, ASISTENCIAS.ESTATUS, GRUPOS.NOMBRE " +
+                    "FROM ASISTENCIAS " +
+                    "INNER JOIN ALUMNOS  ON (ALUMNOS.NOCONTROL = ASISTENCIAS.NOCONTROL_ALUMNO) " +
+                    "INNER JOIN GRUPOS ON (GRUPOS.ID = ASISTENCIAS.ID_GRUPO) " +
+                    addFiltersAsistencias ( noControl, idGrupo ),
+                    null
+                );
+
         ArrayList<Asistencia> asistencias = new ArrayList<>();
         if(cursor.moveToFirst()){
             do{
-                //asistencias.add(new Asistencia(cursor.getString(1), cursor.getString(4), cursor.getString(5), new Date(), cursor.getString(3)));
+                asistencias.add(
+                        new Asistencia(
+                                cursor.getString ( 1 ),
+                                cursor.getString ( 2 ),
+                                cursor.getString ( 3 ),
+                                AsistenciaStatus.valueOf( cursor.getString ( 4 ) ),
+                                GrupoEnum.valueOf ( cursor.getString ( 5 ) )
+                        )
+                );
             }while(cursor.moveToNext());
         }
         return asistencias;
+    }
+
+    private String addFiltersAsistencias ( String noControl, int idGrupo ) {
+        String where = " WHERE ";
+        if ( noControl.isEmpty() && idGrupo <= 0 ) return "";
+
+        if ( noControl.length() > 0 ) where += " NO_CONTROL_ALUMNO like " + noControl + " ";
+
+        if ( noControl.isEmpty() && idGrupo > 0 ) where += " ID_GRUPO = " + idGrupo + " ";
+
+        if ( noControl.length() > 0 && idGrupo > 0 ) where += " AND ID_GRUPO = " + idGrupo + " ";
+
+        return where;
     }
 }
