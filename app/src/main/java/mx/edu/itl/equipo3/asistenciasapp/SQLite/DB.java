@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
 
@@ -55,7 +56,7 @@ public class DB extends SQLiteOpenHelper {
     public void addAlumno(String noControl, String nombre) {
         SQLiteDatabase dbWrite = getWritableDatabase();
         if( dbWrite != null ) {
-            dbWrite.execSQL("INSERT INTO ALUMNOS VALUES ('"+noControl+"','"+nombre+"')");
+            dbWrite.execSQL("INSERT INTO ALUMNOS (NOCONTROL, NOMBRE) VALUES ('"+noControl+"','"+nombre+"')");
             dbWrite.close();
         }
     }
@@ -91,6 +92,19 @@ public class DB extends SQLiteOpenHelper {
             dbWrite.execSQL("INSERT INTO ASISTENCIAS VALUES ('"+fechaStr+"','"+estatus+"','"+idGrupo+"','"+noControl+"')");
             dbWrite.close();
         }
+    }
+
+    public ArrayList<Alumno> getAlumnos(){
+        SQLiteDatabase dbRead = getReadableDatabase();
+        Cursor cursor = dbRead.rawQuery("SELECT * FROM ALUMNOS", null );
+        ArrayList<Alumno> alumnos = new ArrayList<>();
+        String [] nombres = {"nombre"};
+        if(cursor.moveToFirst()){
+            do {
+                alumnos.add(new Alumno(cursor.getString(0), cursor.getString(1), nombres));
+            }while (cursor.moveToNext());
+        }
+        return  alumnos;
     }
 
     public ArrayList<Asistencia> getAsistencias (String noControl, int idGrupo) {
