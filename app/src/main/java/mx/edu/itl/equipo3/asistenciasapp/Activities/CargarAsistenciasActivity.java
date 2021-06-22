@@ -1,23 +1,26 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Activities;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.codekidlabs.storagechooser.StorageChooser;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Objects;
+
+import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterListaArchivos;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
+import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAsistenciasHelper;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
+import mx.edu.itl.equipo3.asistenciasapp.R;
 
 
 public class CargarAsistenciasActivity extends AppCompatActivity {
@@ -25,6 +28,10 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
 
     TextView textViewPath;
     TextView textViewTotalArchivos;
+
+    Button btnLimpiar;
+    Button btnCargar;
+
     RecyclerView cargaAsisRecyclerView;
 
     ArrayList<InfoArchivo> infoArchivoArrayList;
@@ -37,14 +44,17 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cargar_asistencias);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        textViewPath = findViewById ( R.id.txtvCargarAsisPath );
-        textViewTotalArchivos = findViewById ( R.id.txtvCargaAsisCount );
+        textViewPath = findViewById ( R.id.txtvCargarAsisPath);
+        textViewTotalArchivos = findViewById ( R.id.txtvCargarAsisCount);
 
-        cargaAsisRecyclerView = findViewById ( R.id.recyclerViewCargarAsis );
+        btnLimpiar = findViewById ( R.id.btnCargarAsisLimpiar);
+        btnCargar = findViewById ( R.id.btnCargarAsisCargar);
+
+        cargaAsisRecyclerView = findViewById ( R.id.recyclerViewCargarAsis);
     }
 
     public void onClickAtras ( View v ) {
-        finishActivity ( CARGAR_ASISTENCIAS_CODE );
+        finish ( );
     }
 
     public void onClickSelectFolder ( View v ) {
@@ -65,6 +75,10 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
                 textViewPath.setText ( path );
                 infoArchivoArrayList = CargarAsistenciasHelper.getFiles ( path );
 
+                if ( infoArchivoArrayList.size() <= 0) return;
+
+                activarControles ();
+
                 adapter = new AdapterListaArchivos(infoArchivoArrayList);
 
                 cargaAsisRecyclerView.setAdapter ( adapter );
@@ -84,6 +98,7 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged ();
         textViewPath.setText ( "" );
         textViewTotalArchivos.setText ( "0 Archivos" );
+        desactivarControles ();
     }
 
     public void onClickCargar ( View v ) {
@@ -92,67 +107,18 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
 
         Log.d("ALUMNOS", String.valueOf(alumnos.size()));
     }
-}
 
-class AdapterListaArchivos extends RecyclerView.Adapter<AdapterListaArchivos.ViewHolder> {
-
-    ArrayList<InfoArchivo> infoArchivoArrayList;
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textViewNombre;
-        private final TextView textViewPeso;
-        private final TextView textViewPath;
-
-        public ViewHolder(View view) {
-            super(view);
-            // Define click listener for the ViewHolder's View
-
-            textViewNombre = (TextView) view.findViewById(R.id.txtCargaAsisListaArchivoNombre);
-            textViewPeso = (TextView) view.findViewById(R.id.txtCargaAsisListaArchivoPeso);
-            textViewPath = (TextView) view.findViewById(R.id.txtCargaAsisListaArchivoPath);
-        }
-
-        public TextView getTextViewNombre() {
-            return textViewNombre;
-        }
-
-        public TextView getTextViewPeso() {
-            return textViewPeso;
-        }
-
-        public TextView getTextViewPath() {
-            return textViewPath;
-        }
+    private void activarControles () {
+        establecerControles ( true, true );
     }
 
-    /**
-     * Initialize the dataset of the Adapter.
-     *
-     * @param dataSet ArrayList<InfoArchivo> containing the data to populate views to be used
-     * by RecyclerView.
-     */
-    public AdapterListaArchivos(ArrayList<InfoArchivo> dataSet) {
-        infoArchivoArrayList = dataSet;
+    private void desactivarControles () {
+        establecerControles ( false, false );
     }
 
-    @NotNull
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.carga_asistencia_lista_archivos, viewGroup, false);
-
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        viewHolder.getTextViewNombre().setText(infoArchivoArrayList.get ( position).getNombre() );
-        viewHolder.getTextViewPeso().setText(infoArchivoArrayList.get ( position).getPesoKB() );
-        viewHolder.getTextViewPath().setText(infoArchivoArrayList.get ( position).getPath() );
-    }
-
-    @Override
-    public int getItemCount() {
-        return infoArchivoArrayList.size();
+    private void establecerControles ( boolean setBtnLimpiarEnabled, boolean setBtnCargarEnabled ) {
+        btnLimpiar.setEnabled ( setBtnLimpiarEnabled );
+        btnCargar.setEnabled ( setBtnCargarEnabled );
     }
 }
+

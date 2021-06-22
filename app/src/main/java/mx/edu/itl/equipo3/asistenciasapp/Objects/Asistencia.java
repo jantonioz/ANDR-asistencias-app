@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Objects;
 
 import java.util.Date;
 
@@ -7,9 +7,9 @@ public class Asistencia {
     private String nombre;
     private String noControl;
     private Date fechaDate;
-    private String status; // "PRESENTE" | "JUSTIFICADO"
+    private Asistencia_STATUS status; // "PRESENTE" | "JUSTIFICADO"
 
-    public Asistencia(String fecha, String nombre, String noControl, Date fechaDate, String status) {
+    public Asistencia(String fecha, String nombre, String noControl, Date fechaDate, Asistencia_STATUS status) {
         this.fecha = fecha;
         this.nombre = nombre;
         this.noControl = noControl;
@@ -49,11 +49,11 @@ public class Asistencia {
         this.fechaDate = fechaDate;
     }
 
-    public String getStatus() {
+    public Asistencia_STATUS getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Asistencia_STATUS status) {
         this.status = status;
     }
 }

@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia;
+import mx.edu.itl.equipo3.asistenciasapp.R;
 import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 
 public class DetallesAlumnoActivity extends AppCompatActivity {
@@ -49,9 +50,8 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
     }
 
     private void llenarDetalles(){
-        //listaDetalles = db.getAsistencias(noControl);
+        listaDetalles = db.getAsistencias(noControl, 1);
     }
-
 
     class AdaptadorDetalles extends RecyclerView.Adapter<AdaptadorDetalles.ViewHolderDetalles>{
 
@@ -71,7 +71,7 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolderDetalles holder, int position) {
             holder.fecha.setText(listaDetalles.get(position).getFecha());
-            holder.estatus.setText(listaDetalles.get(position).getStatus());
+            holder.estatus.setText(listaDetalles.get(position).getStatus().toString());
         }
 
         @Override
