@@ -19,6 +19,7 @@ import java.util.Objects;
 import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterListaArchivos;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAsistenciasHelper;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 import mx.edu.itl.equipo3.asistenciasapp.R;
 
@@ -35,6 +36,7 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
     RecyclerView cargaAsisRecyclerView;
 
     ArrayList<InfoArchivo> infoArchivoArrayList;
+    ArrayList<Grupo> grupos;
 
     AdapterListaArchivos adapter;
 
@@ -74,6 +76,7 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
             public void onSelect(String path) {
                 textViewPath.setText ( path );
                 infoArchivoArrayList = CargarAsistenciasHelper.getFiles ( path );
+                grupos = CargarAsistenciasHelper.getGruposFromFiles ( infoArchivoArrayList);
 
                 if ( infoArchivoArrayList.size() <= 0) return;
 
@@ -103,7 +106,7 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
 
     public void onClickCargar ( View v ) {
         ArrayList<Alumno> alumnos =
-            CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList );
+            CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList, grupos );
 
         Log.d("ALUMNOS", String.valueOf(alumnos.size()));
     }
