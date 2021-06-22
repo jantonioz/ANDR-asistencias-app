@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AsistenciasApp">
-        <activity android:name=".CargarAlumnosActivity"></activity>
+        <activity android:name=".DetallesAlumnoActivity"></activity>
+        <activity android:name=".ListaTotalAlumnosActivity" />
         <activity android:name=".CargarAsistenciasActivity">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
