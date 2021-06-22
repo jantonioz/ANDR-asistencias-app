@@ -84,7 +84,7 @@ public class CargarAlumnosHelper {
     }
 
     private static String sanitizarLinea ( String linea ) {
-        return linea.replaceAll( "[^a-zA-Z,ñÑ0-9]", "" ).trim ();
+        return linea.replaceAll( "[^a-zA-Z,ñÑ0-9 ]", "" ).trim ();
     }
 
     private static boolean esAlumnoValido ( String linea, String regex ) {
