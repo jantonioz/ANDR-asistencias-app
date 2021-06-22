@@ -1,6 +1,7 @@
 package mx.edu.itl.equipo3.asistenciasapp.Helpers;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.util.ArrayMap;
 import android.util.Log;
 
@@ -24,22 +25,23 @@ import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia_STATUS;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupos_ENUM;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
+import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 
 public class CargarAsistenciasHelper {
     @SuppressLint("SimpleDateFormat")
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
 
     public static ArrayList<InfoArchivo> getFiles(String path) {
-        // gets the files in the directory
         File fileDirectory = new File( path );
-        // lists all the files into an array
         File[] dirFiles = fileDirectory.listFiles();
 
         ArrayList<InfoArchivo> infoArchivos = new ArrayList<>();
 
         try {
-        assert dirFiles != null;
-        if (dirFiles.length != 0) {
+            assert dirFiles != null;
+            if (dirFiles.length == 0) { return infoArchivos; }
+
+
             for (File dirFile : dirFiles) {
                 if ( !dirFile.isFile() && dirFile.isDirectory() ) {
                     ArrayList<InfoArchivo> infoArchivosSub = getFiles( dirFile.getAbsolutePath() );
@@ -47,31 +49,80 @@ public class CargarAsistenciasHelper {
                 }
 
                 else {
+                    if ( !esNombreArchivoValido ( dirFile.getName() ) ) {
+                        continue;
+                    }
+
                     String [] grupo_fecha = getFecha_GrupoDeNombreArchivo ( dirFile.getName() );
+                    Grupos_ENUM grupoEnum = getGrupoEnum ( grupo_fecha[0] );
+
+
+
                     infoArchivos.add ( new InfoArchivo (
                                 dirFile.getName(),
                                 String.valueOf(dirFile.length()/1024) + "KB",
                                 path,
                                 path + File.separator + dirFile.getName(),
                                 dirFile,
-                                getGrupoEnum ( grupo_fecha[0] ),
+                                grupoEnum,
                                 grupo_fecha[1]
                             )
                     );
                 }
+
             }
-        }} catch (Exception e ) {
+        } catch (Exception e ) {
             Log.d("A", "A");
         }
         return infoArchivos;
     }
 
+    public static ArrayList<Grupo> getGruposFromFiles ( ArrayList <InfoArchivo> archivos ) {
+        ArrayMap<String, Grupo> gruposMap = new ArrayMap<String, Grupo>();
+        ArrayList<Grupo> grupos = new ArrayList<>();
+
+        for (InfoArchivo archivo : archivos ) {
+            Grupos_ENUM grupoEnum = archivo.getGrupo();
+
+
+            if ( gruposMap.containsKey ( grupoEnum.toString() ) )
+                gruposMap.put ( grupoEnum.toString(),
+                        new Grupo (
+                                0,
+                                grupoEnum.toString(),
+                                "Fernando Gil",
+                                gruposMap.get ( grupoEnum.toString() ).getClases () + 1 )
+                );
+            else
+                gruposMap.put ( grupoEnum.toString(),
+                        new Grupo (
+                                0,
+                                grupoEnum.toString(),
+                                "Fernando Gil",
+                                1 )
+                );
+        }
+
+        gruposMap.values ().forEach(new Consumer<Grupo>() {
+            @Override
+            public void accept(Grupo grupo) {
+                grupos.add ( grupo );
+            }
+        });
+
+        return grupos;
+    }
+
     private static Grupos_ENUM getGrupoEnum(String grupo) {
-        return Grupos_ENUM.valueOf ( grupo );
+        try {
+            Grupos_ENUM _grupo =  Grupos_ENUM.valueOf ( grupo );
+            return _grupo;
+        } catch (IllegalArgumentException e) {
+            return Grupos_ENUM.NONE;
+        }
     }
 
     private static String[] getFecha_GrupoDeNombreArchivo ( String nombre ) {
-        if ( !esNombreArchivoValido ( nombre ) ) return new String[]{"", ""};
         String [] datos = nombre.split ( " " );
         String fecha = datos [ 0 ];
         String grupo = datos [ 1 ].split ( "-" )[0];
@@ -80,17 +131,15 @@ public class CargarAsistenciasHelper {
     }
 
     private static boolean esNombreArchivoValido ( String nombre ) {
-        return nombre.trim().toLowerCase().matches ( "(?i)[0-9]{4}-[0-9]{2}-[0-9]{2}\\s*(andr|tap|la2)-asistencia\\.txt$" );
+        return nombre.trim().toLowerCase().matches ( "(?i)[0-9]{4}-[0-9]{2}-[0-9]{2}\\s*(andr|tap|la2)-?\\s?asistencia\\.txt$" );
     }
 
-    public static ArrayList<Alumno> obtenerAsistenciasPorAlumno (ArrayList<InfoArchivo> archivos ) {
-        return procesarArchivos ( archivos );
+    public static ArrayList<Alumno> obtenerAsistenciasPorAlumno (ArrayList<InfoArchivo> archivos, ArrayList<Grupo> grupos ) {
+        return procesarArchivos ( archivos, grupos );
     }
 
-    private static ArrayList<Alumno> procesarArchivos(ArrayList<InfoArchivo> archivos) {
+    private static ArrayList<Alumno> procesarArchivos(ArrayList<InfoArchivo> archivos, ArrayList<Grupo> grupos) {
         ArrayMap<String, Alumno> alumnosArrayMap = new ArrayMap<>();
-        ArrayMap<String, Grupo> gruposMap = new ArrayMap<String, Grupo>();
-        ArrayList<Grupo> grupos = new ArrayList<>();
         ArrayList<Alumno> alumnos = new ArrayList<>();
 
 
@@ -98,31 +147,7 @@ public class CargarAsistenciasHelper {
             String grupo = archivo.getGrupo().toString();
 
             procesarArchivo ( alumnosArrayMap, archivo );
-
-            if ( gruposMap.containsKey ( grupo ) )
-                gruposMap.put ( grupo,
-                        new Grupo (
-                                0,
-                                archivo.getGrupo().toString(),
-                                "Fernando Gil",
-                                gruposMap.get ( grupo ).getClases () + 1 )
-                        );
-            else
-                gruposMap.put ( grupo,
-                        new Grupo (
-                                0,
-                                archivo.getGrupo().toString(),
-                                "Fernando Gil",
-                                 1 )
-                );
         }
-
-        gruposMap.values ().forEach(new Consumer<Grupo>() {
-            @Override
-            public void accept(Grupo grupo) {
-                grupos.add(grupo);
-            }
-        });
 
         alumnosArrayMap.values ().forEach(new Consumer<Alumno>() {
             @Override
@@ -225,5 +250,18 @@ public class CargarAsistenciasHelper {
 
     public static void guardarAsistencias ( ArrayList<Asistencia> asistenciasArrayList ) {
 
+    }
+
+    public static void guardarGrupos ( ArrayList<Grupo> grupos, Context context ) {
+        DB db = new DB ( context );
+
+        for ( Grupo grupo : grupos ) {
+            db.addGrupo ( grupo.getNombre(), grupo.getProfe(), grupo.getClases() );
+        }
+
+
+        ArrayList<Grupo> selectGrupos = db.getGrupos();
+
+        return;
     }
 }

@@ -108,6 +108,8 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         ArrayList<Alumno> alumnos =
             CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList, grupos );
 
+
+        CargarAsistenciasHelper.guardarGrupos ( grupos, getApplicationContext() );
         Log.d("ALUMNOS", String.valueOf(alumnos.size()));
     }
 
