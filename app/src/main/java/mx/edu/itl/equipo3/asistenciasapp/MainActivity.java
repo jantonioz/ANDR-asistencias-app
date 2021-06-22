@@ -15,6 +15,7 @@ import androidx.navigation.ui.NavigationUI;
 import java.util.Date;
 
 import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
+import mx.edu.itl.equipo3.asistenciasapp.SendEmail.SendMail;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,4 +32,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent ( this, ListaTotalAlumnosActivity.class );
         startActivity( intent );
     }
+
+    /*public void btnEnviarEmailClick ( View v ) {
+        SendMail sm = new SendMail(this, "angel.14.98@hotmail.com", "Lista", "Hola buenas tardes");
+        sm.execute();
+    }*/
 }

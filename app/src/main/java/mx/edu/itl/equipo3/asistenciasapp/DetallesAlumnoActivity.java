@@ -49,7 +49,7 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
     }
 
     private void llenarDetalles(){
-        listaDetalles = db.getAsistencias(noControl);
+        //listaDetalles = db.getAsistencias(noControl);
     }
 
 
