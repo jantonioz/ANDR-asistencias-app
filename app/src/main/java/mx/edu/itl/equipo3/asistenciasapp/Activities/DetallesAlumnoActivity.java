@@ -53,7 +53,6 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
         listaDetalles = db.getAsistencias(noControl, 1);
     }
 
-
     class AdaptadorDetalles extends RecyclerView.Adapter<AdaptadorDetalles.ViewHolderDetalles>{
 
         ArrayList<Asistencia> listaDetalles;

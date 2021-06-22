@@ -40,4 +40,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent ( this, ListaTotalAlumnosActivity.class );
         startActivity( intent );
     }
+
+        /*public void btnEnviarEmailClick ( View v ) {
+        SendMail sm = new SendMail(this, "angel.14.98@hotmail.com", "Lista", "Hola buenas tardes");
+        sm.execute();
+    }*/
+
+
+        /*final DB db = new DB(getApplicationContext());
+        db.clearDataBase();*/
 }
