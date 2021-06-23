@@ -262,8 +262,8 @@ public class CargarAsistenciasHelper {
                 );
             }
         }
-        ArrayList<Asistencia> selectAsistencias = db.getAsistencias("", -1);
-        return;
+        //ArrayList<Asistencia> selectAsistencias = db.getAsistencias("", -1);
+        //return;
     }
 
     private static Grupo obtenerGrupoPorNombre (ArrayList<Grupo> grupos, String nombre) {
