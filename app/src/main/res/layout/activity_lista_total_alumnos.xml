@@ -53,7 +53,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:onClick="btnEnviarEmailClick"
+        android:onClick="btnDialogoEmailIncrustadoClick"
         android:text="Enviar por Email"
         app:icon="@drawable/ic_baseline_email_24"
         app:layout_constraintBottom_toBottomOf="parent"

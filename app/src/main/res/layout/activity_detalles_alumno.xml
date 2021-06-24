@@ -14,9 +14,15 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="No.Control"
-        android:textColor="@color/black"
-        android:textSize="24sp"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
         android:textStyle="bold" />
+
+    <com.anychart.AnyChartView
+        android:id="@+id/anyChartView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="20dp"></com.anychart.AnyChartView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

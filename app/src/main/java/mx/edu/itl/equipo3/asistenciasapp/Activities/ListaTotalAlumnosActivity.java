@@ -2,19 +2,23 @@ package mx.edu.itl.equipo3.asistenciasapp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -22,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterAsistencias;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
@@ -78,8 +83,11 @@ public class ListaTotalAlumnosActivity extends AppCompatActivity {
             @Override
             public void onItemClick(Total asistencia) {
                 Intent intent = new Intent(ListaTotalAlumnosActivity.this, DetallesAlumnoActivity.class);
+                intent.putExtra("nombre", asistencia.getNombre());
                 intent.putExtra("noControl", asistencia.getNoControl());
                 intent.putExtra("idGrupo", idGrupo);
+                intent.putExtra("presentes", asistencia.getTotalPresente());
+                intent.putExtra("justificados", asistencia.getTotalJustificado());
                 startActivity(intent);
             }
         }));
@@ -155,5 +163,49 @@ public class ListaTotalAlumnosActivity extends AppCompatActivity {
         Log.d("Mensaje", materia);
         SendMail sm = new SendMail(this, "angel.14.98@hotmail.com", "ASISTENCIAS "+materia, message);
         sm.execute();
+    }
+
+    //Ciadro de dialogo con un layout de login incrustado y botones Aceptar y Cancelar
+    private View email_layout;
+    private EditText edtEmail;
+    public void btnDialogoEmailIncrustadoClick ( View v ) {
+        email_layout = getLayoutInflater().inflate( R.layout.email_layout, null );
+        edtEmail = email_layout.findViewById( R.id.edtEmail );
+
+        AlertDialog.Builder builder = new AlertDialog.Builder( this );
+        builder.setTitle( "Ingresa tu Email" )
+                .setIcon(R.drawable.ic_baseline_email_black_24)
+                .setView( email_layout )
+                .setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!validarEmail(edtEmail.getText().toString())){
+                            Toast.makeText(ListaTotalAlumnosActivity.this,"EMAIL NO VÁLIDO",Toast.LENGTH_LONG).show();
+                        } else {
+                            String message = "";
+                            String materia = asistencias.get(0).getGrupo()+"";
+                            for(Total total : totales){
+                                message = message + total.getNoControl() + "    " + total.getNombre()  +
+                                        "      Total: " + total.getTotal() + "      Porcentaje: " + total.getPorcentaje() + "\n";
+                            }
+                            SendMail sm = new SendMail(ListaTotalAlumnosActivity.this, edtEmail.getText().toString(), "ASISTENCIAS "+materia, message);
+                            sm.execute();
+                        }
+                    }
+                })
+                .setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss(); // cerrar el dialogo sin hacer nada
+                    }
+                })
+                .setCancelable( false )
+                .create()
+                .show();
+    }
+
+    private boolean validarEmail(String email) {
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
     }
 }
