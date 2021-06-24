@@ -31,18 +31,19 @@ import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Total;
 import mx.edu.itl.equipo3.asistenciasapp.R;
 import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
+import mx.edu.itl.equipo3.asistenciasapp.SendEmail.SendMail;
 
 public class ListaTotalAlumnosActivity extends AppCompatActivity {
 
     private RecyclerView listVTotales;
     private Spinner spinner;
 
-    ArrayList<Total> totales;
-    ArrayList<Alumno> alumnos;
-    ArrayList<Asistencia> asistencias;
+    private ArrayList<Total> totales;
+    private ArrayList<Alumno> alumnos;
+    private ArrayList<Asistencia> asistencias;
 
-    ArrayList<Grupo> grupos;
-    ArrayList<String> gruposNombres;
+    private ArrayList<Grupo> grupos;
+    private ArrayList<String> gruposNombres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,25 +59,28 @@ public class ListaTotalAlumnosActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 armarTotales(position+1);
-                itemClick();
+                itemClick(position+1);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 armarTotales(1);
-                itemClick();
+                itemClick(1);
             }
         });
         
     }
 
-    private void itemClick(){
+    private void itemClick(int idGrupo){
         listVTotales = findViewById( R.id.recyclerViewAsistencias );
         listVTotales.setLayoutManager(new LinearLayoutManager( getApplicationContext()));
         listVTotales.setAdapter(new AdapterAsistencias(totales, new AdapterAsistencias.OnItemClickListener() {
             @Override
             public void onItemClick(Total asistencia) {
-                Toast.makeText(getApplicationContext(), asistencia.getNombre(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(ListaTotalAlumnosActivity.this, DetallesAlumnoActivity.class);
+                intent.putExtra("noControl", asistencia.getNoControl());
+                intent.putExtra("idGrupo", idGrupo);
+                startActivity(intent);
             }
         }));
     }
@@ -128,7 +132,7 @@ public class ListaTotalAlumnosActivity extends AppCompatActivity {
     private void getAsistencias (int idGrupo){
         DB db = new DB(getApplicationContext());
         asistencias = new ArrayList<>();
-        asistencias = db.getAsistencias("17130850", idGrupo);
+        asistencias = db.getAsistencias("", idGrupo);
     }
 
     private void getGrupos () {
@@ -138,5 +142,18 @@ public class ListaTotalAlumnosActivity extends AppCompatActivity {
         for( Grupo grupo : grupos ) {
             gruposNombres.add(grupo.getNombre());
         }
+    }
+
+    public void btnEnviarEmailClick ( View v ) {
+        String message = "";
+        String materia = asistencias.get(0).getGrupo()+"";
+        for(Total total : totales){
+            message = message + total.getNoControl() + "    " + total.getNombre()  +
+                                                                                 "      Total: " + total.getTotal() + "      Porcentaje: " + total.getPorcentaje() + "\n";
+        }
+
+        Log.d("Mensaje", materia);
+        SendMail sm = new SendMail(this, "angel.14.98@hotmail.com", "ASISTENCIAS "+materia, message);
+        sm.execute();
     }
 }
