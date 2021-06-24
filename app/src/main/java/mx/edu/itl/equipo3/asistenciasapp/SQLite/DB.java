@@ -92,8 +92,8 @@ public class DB extends SQLiteOpenHelper {
         SQLiteDatabase dbWrite = getWritableDatabase();
         if( dbWrite != null ) {
             dbWrite.execSQL("INSERT OR IGNORE INTO ASISTENCIAS ( FECHASTR, ESTATUS, ID_GRUPO, NOCONTROL_ALUMNO) VALUES " +
-                    "('"+fechaStr+"','"+estatus+"',"+idGrupo+",'"+noControl+"') " ); //+
-                    //"ON CONFLICT DO NOTHING");
+                    "('"+fechaStr+"','"+estatus+"',"+idGrupo+",'"+noControl+"') " );
+                    //+ "ON CONFLICT DO NOTHING");
             dbWrite.close();
         }
     }
@@ -119,8 +119,10 @@ public class DB extends SQLiteOpenHelper {
                     "FROM ASISTENCIAS " +
                     "INNER JOIN ALUMNOS  ON (ALUMNOS.NOCONTROL = ASISTENCIAS.NOCONTROL_ALUMNO) " +
                     "INNER JOIN GRUPOS ON (GRUPOS.ID = ASISTENCIAS.ID_GRUPO) " +
-                    addFiltersAsistencias ( noControl, idGrupo ),
-                    null
+                            "WHERE GRUPOS.ID like " + idGrupo + addFiltersAsistencias(noControl)
+                            //"AND ASISTENCIAS.NOCONTROL_ALUMNO = "+noControl+""
+                    //+ addFiltersAsistencias ( noControl, idGrupo ),
+                    ,null
                 );
 
         ArrayList<Asistencia> asistencias = new ArrayList<>();
@@ -140,15 +142,12 @@ public class DB extends SQLiteOpenHelper {
         return asistencias;
     }
 
-    private String addFiltersAsistencias ( String noControl, int idGrupo ) {
-        String where = " WHERE ";
-        if ( noControl.isEmpty() && idGrupo <= 0 ) return "";
+    private String addFiltersAsistencias ( String noControl ) {
+        String where = "";
 
-        if ( noControl.length() > 0 ) where += " NO_CONTROL_ALUMNO like " + noControl + " ";
+        if ( noControl.isEmpty() ) where = "";
 
-        if ( noControl.isEmpty() && idGrupo > 0 ) where += " ID_GRUPO = " + idGrupo + " ";
-
-        if ( noControl.length() > 0 && idGrupo > 0 ) where += " AND ID_GRUPO = " + idGrupo + " ";
+        if ( !noControl.isEmpty() ) where = " AND ASISTENCIAS.NOCONTROL_ALUMNO = "+noControl+"";
 
         return where;
     }

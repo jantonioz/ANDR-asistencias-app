@@ -14,17 +14,19 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterDetalles;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia;
 import mx.edu.itl.equipo3.asistenciasapp.R;
 import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 
 public class DetallesAlumnoActivity extends AppCompatActivity {
 
-    TextView noControlView;
-    ArrayList<Asistencia> listaDetalles;
-    RecyclerView recyclerViewDetalles;
+    private TextView noControlView;
+    private ArrayList<Asistencia> listaDetalles;
+    private RecyclerView recyclerViewDetalles;
     private String noControl;
-    DB db;
+    private int idGrupo;
+    private DB db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,8 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
         Bundle extra = intent.getExtras();
 
         noControl = extra.getString("noControl");
+        idGrupo = extra.getInt("idGrupo");
+
         noControlView.setText(noControl);
 
         db = new DB(getApplicationContext());
@@ -45,48 +49,13 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
         recyclerViewDetalles.setLayoutManager(new LinearLayoutManager(this));
         llenarDetalles();
 
-        AdaptadorDetalles adapter = new AdaptadorDetalles(listaDetalles);
+        AdapterDetalles adapter = new AdapterDetalles(listaDetalles);
         recyclerViewDetalles.setAdapter(adapter);
     }
 
     private void llenarDetalles(){
-        listaDetalles = db.getAsistencias(noControl, 1);
+        listaDetalles = db.getAsistencias(noControl, idGrupo);
     }
 
-    class AdaptadorDetalles extends RecyclerView.Adapter<AdaptadorDetalles.ViewHolderDetalles>{
 
-        ArrayList<Asistencia> listaDetalles;
-
-        public AdaptadorDetalles(ArrayList<Asistencia> listaDetalles) {
-            this.listaDetalles = listaDetalles;
-        }
-
-        @NonNull
-        @Override
-        public ViewHolderDetalles onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_detalles, null, false);
-            return new ViewHolderDetalles(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolderDetalles holder, int position) {
-            holder.fecha.setText(listaDetalles.get(position).getFecha());
-            holder.estatus.setText(listaDetalles.get(position).getStatus().toString());
-        }
-
-        @Override
-        public int getItemCount() {
-            return listaDetalles.size();
-        }
-
-        public class ViewHolderDetalles extends RecyclerView.ViewHolder {
-            TextView fecha, estatus;
-
-            public ViewHolderDetalles(@NonNull View itemView) {
-                super(itemView);
-                fecha = (TextView) itemView.findViewById(R.id.txtFecha);
-                estatus = (TextView) itemView.findViewById(R.id.txtEstatus);
-            }
-        }
-    }
 }

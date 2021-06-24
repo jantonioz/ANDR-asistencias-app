@@ -3,6 +3,8 @@ package mx.edu.itl.equipo3.asistenciasapp.Activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,103 +15,145 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterAsistencias;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Asistencia;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.AsistenciaStatus;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Total;
 import mx.edu.itl.equipo3.asistenciasapp.R;
 import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
+import mx.edu.itl.equipo3.asistenciasapp.SendEmail.SendMail;
 
 public class ListaTotalAlumnosActivity extends AppCompatActivity {
 
-    private ListView listVTotales;
-    private final String [] nosControl = {"17130848", "17130878", "17001231", "17189867"};
-    private final String [] nombres = {"Juan Castillo", "Ernesto Perez", "Gustavo Díaz", "Maria García"};
-    private final int [] presentes = {50,50,49,48};
-    private final int [] justificadas = {0,0,1,2};
-    private final int [] totales = {50,50,50,50};
-    private final String [] porcentajes = {"100%","100%","100%","100%"};
+    private RecyclerView listVTotales;
+    private Spinner spinner;
 
-    ArrayList<Alumno> alumnos;
+    private ArrayList<Total> totales;
+    private ArrayList<Alumno> alumnos;
+    private ArrayList<Asistencia> asistencias;
+
+    private ArrayList<Grupo> grupos;
+    private ArrayList<String> gruposNombres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_total_alumnos);
+        getAlumnos();
+        getGrupos();
 
-        listVTotales = findViewById( R.id.listVTotales );
-        MiAdaptador adaptador = new MiAdaptador (this, nosControl, nombres, presentes,
-                                            justificadas, totales, porcentajes);
-        listVTotales.setAdapter( adaptador );
+        spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, gruposNombres));
 
-        listVTotales.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent ( ListaTotalAlumnosActivity.this, DetallesAlumnoActivity.class );
-                intent.putExtra("noControl", nosControl [position]);
-                startActivity( intent );
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                armarTotales(position+1);
+                itemClick(position+1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                armarTotales(1);
+                itemClick(1);
             }
         });
-        getAlumnos();
+        
     }
 
-    //PRUEBA PARA VER SI LOS ALUMNOS SE GUARDARON EN BD
+    private void itemClick(int idGrupo){
+        listVTotales = findViewById( R.id.recyclerViewAsistencias );
+        listVTotales.setLayoutManager(new LinearLayoutManager( getApplicationContext()));
+        listVTotales.setAdapter(new AdapterAsistencias(totales, new AdapterAsistencias.OnItemClickListener() {
+            @Override
+            public void onItemClick(Total asistencia) {
+                Intent intent = new Intent(ListaTotalAlumnosActivity.this, DetallesAlumnoActivity.class);
+                intent.putExtra("noControl", asistencia.getNoControl());
+                intent.putExtra("idGrupo", idGrupo);
+                startActivity(intent);
+            }
+        }));
+    }
+
+    private void armarTotales(int idGrupo){
+        totales = new ArrayList<>();
+        int totalPresente = 0;
+        int totalJustificado = 0;
+        boolean exist;
+        int clases = 0;
+
+        getAsistencias(idGrupo);
+
+        for(Alumno alu: alumnos){
+            exist = false;
+            for(Asistencia asis: asistencias){
+                if(asis.getNoControl().equals(alu.getNoControl())){
+                    exist = true;
+
+                    if(asis.getStatus().equals(AsistenciaStatus.PRESENTE)){
+                        totalPresente++;
+
+                    } else if (asis.getStatus().equals(AsistenciaStatus.JUSTIFICADO)){
+                        totalJustificado++;
+                    }
+                    for (Grupo grupo : grupos ){
+                        if(grupo.getNombre().equals(asis.getGrupo()+"")){
+                            clases = grupo.getClases();
+                            Log.d("grupos", grupo.getClases()+"");
+                        }
+                    }
+                }
+            }
+            if(exist){
+                totales.add(new Total(alu.getNoControl(), alu.getNombreCompleto(), totalPresente, totalJustificado, totalPresente+totalJustificado,
+                                ( ( ( totalPresente + totalJustificado) * 100 ) / clases )+"%"));
+                totalPresente = 0;
+                totalJustificado = 0;
+                clases = 0;
+            }
+        }
+    }
+
     private void getAlumnos (){
         DB db = new DB(getApplicationContext());
         alumnos = db.getAlumnos();
-
-        for (Alumno alu : alumnos ){
-            Log.d("alu", alu.getNoControl() + " "+ alu.getNombreCompleto());;
-        }
-
-
     }
 
-    class  MiAdaptador extends ArrayAdapter {
-        private Context context;
-        private  String [] nosControl;
-        private  String [] nombres;
-        private  int    [] presentes;
-        private  int    [] justificadas;
-        private  int    [] totales;
-        private  String [] porcentajes;
+    private void getAsistencias (int idGrupo){
+        DB db = new DB(getApplicationContext());
+        asistencias = new ArrayList<>();
+        asistencias = db.getAsistencias("", idGrupo);
+    }
 
-        public MiAdaptador(Context context, String[] nosControl, String[] nombres, int[] presentes, int[] justificadas, int[] totales, String[] porcentajes) {
-            super(context, R.layout.list_totales, R.id.txtNoControl, nombres);
-            this.context = context;
-            this.nosControl = nosControl;
-            this.nombres = nombres;
-            this.presentes = presentes;
-            this.justificadas = justificadas;
-            this.totales = totales;
-            this.porcentajes = porcentajes;
+    private void getGrupos () {
+        DB db = new DB(getApplicationContext());
+        gruposNombres = new ArrayList<>();
+        grupos = db.getGrupos();
+        for( Grupo grupo : grupos ) {
+            gruposNombres.add(grupo.getNombre());
+        }
+    }
+
+    public void btnEnviarEmailClick ( View v ) {
+        String message = "";
+        String materia = asistencias.get(0).getGrupo()+"";
+        for(Total total : totales){
+            message = message + total.getNoControl() + "    " + total.getNombre()  +
+                                                                                 "      Total: " + total.getTotal() + "      Porcentaje: " + total.getPorcentaje() + "\n";
         }
 
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            if( convertView == null) {
-                LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-                convertView = layoutInflater.inflate( R.layout.list_totales, parent, false );
-            }
-
-            TextView noControl = convertView.findViewById( R.id.txtNoControl );
-            TextView nombre = convertView.findViewById( R.id.txtNombre );
-            TextView presente = convertView.findViewById( R.id.txtPresente );
-            TextView justificada = convertView.findViewById( R.id.txtJustificada );
-            TextView total = convertView.findViewById( R.id.txtTotal );
-            TextView porcentaje = convertView.findViewById( R.id.txtPorcentaje );
-
-            noControl.setText( nosControl [ position ]);
-            nombre.setText( nombres [ position ]);
-            presente.setText( presentes [ position ]+"");
-            justificada.setText( justificadas [ position ]+"");
-            total.setText( totales [ position ]+"");
-            porcentaje.setText( porcentajes [ position ]);
-
-            return convertView;
-        }
+        Log.d("Mensaje", materia);
+        SendMail sm = new SendMail(this, "angel.14.98@hotmail.com", "ASISTENCIAS "+materia, message);
+        sm.execute();
     }
 }

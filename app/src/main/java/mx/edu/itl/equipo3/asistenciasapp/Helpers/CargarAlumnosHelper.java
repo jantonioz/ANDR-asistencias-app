@@ -1,6 +1,7 @@
 package mx.edu.itl.equipo3.asistenciasapp.Helpers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -92,6 +93,7 @@ public class CargarAlumnosHelper {
     public static void guardarAlumnos(ArrayList<Alumno> arrayList, Context context){
         DB db = new DB(context);
         for (Alumno alu : arrayList ){
+            Log.d("alus", alu.getNoControl().toString()+ " "+ alu.getNombreCompleto().toString());
             db.addAlumno(alu.getNoControl(), alu.getNombreCompleto());
         }
     }

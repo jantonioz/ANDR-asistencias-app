@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         ChecadorDePermisos.checarPermisos ( this, permisosReq );
 
         DB db = new DB(getApplicationContext());
-        db.clearDataBase();
+        //db.clearDataBase();
     }
 
     public void btnOnClickLanzarCargarAsistencias ( View v ) {
