@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.anychart.AnyChart;
@@ -68,7 +69,7 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
         AdapterDetalles adapter = new AdapterDetalles(listaDetalles);
         recyclerViewDetalles.setAdapter(adapter);
 
-        contruirGrafica(presentes, justificados, clases);
+        construirGrafica(presentes, justificados, clases);
 
     }
 
@@ -86,7 +87,7 @@ public class DetallesAlumnoActivity extends AppCompatActivity {
         }
     }
 
-    private void contruirGrafica(int presentes, int justificados, int clases){
+    private void construirGrafica(int presentes, int justificados, int clases){
         Pie pie = AnyChart.pie();
         List<DataEntry> data = new ArrayList<>();
         data.add(new ValueDataEntry("Presentes", presentes));

@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class ListaTotalAlumnosActivity extends AppCompatActivity {
 
     private ArrayList<Grupo> grupos;
     private ArrayList<String> gruposNombres;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,19 +152,6 @@ public class ListaTotalAlumnosActivity extends AppCompatActivity {
         for( Grupo grupo : grupos ) {
             gruposNombres.add(grupo.getNombre());
         }
-    }
-
-    public void btnEnviarEmailClick ( View v ) {
-        String message = "";
-        String materia = asistencias.get(0).getGrupo()+"";
-        for(Total total : totales){
-            message = message + total.getNoControl() + "    " + total.getNombre()  +
-                                                                                 "      Total: " + total.getTotal() + "      Porcentaje: " + total.getPorcentaje() + "\n";
-        }
-
-        Log.d("Mensaje", materia);
-        SendMail sm = new SendMail(this, "angel.14.98@hotmail.com", "ASISTENCIAS "+materia, message);
-        sm.execute();
     }
 
     //Ciadro de dialogo con un layout de login incrustado y botones Aceptar y Cancelar
