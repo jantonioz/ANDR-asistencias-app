@@ -4,104 +4,103 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.CargarAsistenciasActivity">
+    tools:context=".Activities.CargarAlumnosActivity">
+
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textViewCargarAlu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/selecciona_asistenciaslbl"
+        android:text="Cargar alumnos"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCargarAsisAtras" />
+        app:layout_constraintTop_toBottomOf="@+id/btnCargarAluAtras" />
 
     <Button
-        android:id="@+id/btnCargarAsisSelectFolder"
+        android:id="@+id/btnCargarAluSelectFolder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:onClick="onClickSelectFolder"
-        android:text="@string/seleccionar_carpetalbl"
+        android:text="Seleccionar archivo"
         app:icon="@drawable/ic_carpeta_blanco"
         app:iconGravity="start"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewCargarAlu" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewCargarAsis"
+        android:id="@+id/recyclerViewCargarAlu"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/txtvCargarAsisCount"
-        app:layout_constraintTop_toBottomOf="@+id/txtvCargarAsisPath"
+        app:layout_constraintBottom_toTopOf="@+id/txtvCargarAluCount"
+        app:layout_constraintTop_toBottomOf="@+id/txtvCargarAluPath"
         tools:layout_editor_absoluteX="0dp">
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
-        android:id="@+id/btnCargarAsisLimpiar"
+        android:id="@+id/btnCargarAluLimpiar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
         android:enabled="false"
         android:onClick="onClickLimpiar"
-        android:text="@string/limpiarlbl"
+        android:text="Limpiar"
         app:icon="@drawable/ic_borrar_blanco"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btnCargarAsisAtras"
+        android:id="@+id/btnCargarAluAtras"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/white"
         android:onClick="onClickAtras"
-        android:text="@string/atraslbl"
+        android:text="Atrás"
         app:icon="@drawable/ic_regresar_blanco"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnCargarAsisCargar"
+        android:id="@+id/btnCargarAluCargar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:enabled="false"
         android:onClick="onClickCargar"
-        android:text="@string/cargarlbl"
+        android:text="Cargar"
         app:icon="@drawable/ic_ok_blanco"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/txtvCargarAsisPath"
+        android:id="@+id/txtvCargarAluPath"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        android:text="@string/pathlbl"
+        android:text="PATH"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCargarAsisSelectFolder" />
+        app:layout_constraintTop_toBottomOf="@+id/btnCargarAluSelectFolder" />
 
     <TextView
-        android:id="@+id/txtvCargarAsisCount"
+        android:id="@+id/txtvCargarAluCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/archivoslbl"
-        app:layout_constraintBottom_toTopOf="@+id/btnCargarAsisCargar"
+        android:text="0 Archivos"
+        app:layout_constraintBottom_toTopOf="@+id/btnCargarAluCargar"
         app:layout_constraintEnd_toEndOf="parent" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package mx.edu.itl.equipo3.asistenciasapp;
+package mx.edu.itl.equipo3.asistenciasapp.Objects;
 
 import java.io.File;
 
@@ -8,10 +8,10 @@ public class InfoArchivo {
     private String path;
     private String fullPath;
     private File archivo;
-    private String grupo;
+    private GrupoEnum grupo;
     private String fecha;
 
-    public InfoArchivo(String nombre, String pesoKB, String path, String fullPath, File archivo, String grupo, String fecha) {
+    public InfoArchivo(String nombre, String pesoKB, String path, String fullPath, File archivo, GrupoEnum grupo, String fecha) {
         this.nombre = nombre;
         this.pesoKB = pesoKB;
         this.path = path;
@@ -21,11 +21,11 @@ public class InfoArchivo {
         this.fecha = fecha;
     }
 
-    public String getGrupo() {
+    public GrupoEnum getGrupo() {
         return grupo;
     }
 
-    public void setGrupo(String grupo) {
+    public void setGrupo(GrupoEnum grupo) {
         this.grupo = grupo;
     }
 
