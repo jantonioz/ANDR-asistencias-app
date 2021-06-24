@@ -4,21 +4,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.codekidlabs.storagechooser.StorageChooser;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterListaArchivos;
+import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAsistenciasHelper;
+import mx.edu.itl.equipo3.asistenciasapp.Helpers.SnackbarHelper;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAlumnosHelper;
+import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 import mx.edu.itl.equipo3.asistenciasapp.R;
 import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
@@ -30,6 +36,7 @@ public class CargarAlumnosActivity extends AppCompatActivity {
 
     Button btnLimpiar;
     Button btnCargar;
+
 
     RecyclerView cargaAsisRecyclerView;
 
@@ -99,15 +106,26 @@ public class CargarAlumnosActivity extends AppCompatActivity {
     }
 
     public void onClickCargar ( View v ) {
-        DB db = new DB(getApplicationContext());
-        db.clearDataBase();
         if ( archivoAlumnos.isEmpty() ) return;
 
-        ArrayList<Alumno> alumnos =
-                CargarAlumnosHelper.obtenerAlumnos ( archivoAlumnos.get ( 0 ) );
+        ProgressDialog progress;
+        progress = ProgressDialog.show(this, "Cargando Alumnos",
+                "Se están el listado de alumnos", true);
 
-        CargarAlumnosHelper.guardarAlumnos(alumnos, getApplicationContext());
-        Log.d("ALUMNOS", String.valueOf(alumnos.size()));
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Alumno> alumnos =
+                        CargarAlumnosHelper.obtenerAlumnos ( archivoAlumnos.get ( 0 ) );
+
+                CargarAlumnosHelper.guardarAlumnos ( alumnos, getApplicationContext() );
+
+                progress.dismiss ();
+                SnackbarHelper.showSnackbar ( v, "Alumnos cargados correctamente", true);
+                btnCargar.setEnabled ( false );
+            }
+        }, 0);
     }
 
     private void activarControles () {

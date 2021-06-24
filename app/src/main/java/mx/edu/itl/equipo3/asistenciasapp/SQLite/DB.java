@@ -92,8 +92,8 @@ public class DB extends SQLiteOpenHelper {
         SQLiteDatabase dbWrite = getWritableDatabase();
         if( dbWrite != null ) {
             dbWrite.execSQL("INSERT OR IGNORE INTO ASISTENCIAS ( FECHASTR, ESTATUS, ID_GRUPO, NOCONTROL_ALUMNO) VALUES " +
-                    "('"+fechaStr+"','"+estatus+"',"+idGrupo+",'"+noControl+"') " +
-                    "ON CONFLICT DO NOTHING");
+                    "('"+fechaStr+"','"+estatus+"',"+idGrupo+",'"+noControl+"') " ); //+
+                    //"ON CONFLICT DO NOTHING");
             dbWrite.close();
         }
     }

@@ -4,19 +4,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.codekidlabs.storagechooser.StorageChooser;
+import com.github.razir.progressbutton.DrawableButton;
+import com.github.razir.progressbutton.DrawableButtonExtensionsKt;
+import com.github.razir.progressbutton.ProgressParams;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterListaArchivos;
+import mx.edu.itl.equipo3.asistenciasapp.Helpers.SnackbarHelper;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAsistenciasHelper;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
@@ -105,14 +115,24 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
     }
 
     public void onClickCargar ( View v ) {
-        ArrayList<Alumno> alumnos =
-            CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList, grupos );
+        ProgressDialog progress;
+        progress = ProgressDialog.show(this, "Cargando Asistencias",
+                "Se están procesando " + infoArchivoArrayList.size() + " archivos", true);
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Alumno> alumnos =
+                        CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList, grupos );
+                ArrayList<Grupo> dbGrupos = CargarAsistenciasHelper.guardarGrupos ( grupos, getApplicationContext() );
 
-        ArrayList<Grupo> dbGrupos = CargarAsistenciasHelper.guardarGrupos ( grupos, getApplicationContext() );
+                CargarAsistenciasHelper.guardarAsistencias ( alumnos, dbGrupos, getApplicationContext() );
 
-        CargarAsistenciasHelper.guardarAsistencias ( alumnos, dbGrupos, getApplicationContext() );
-        Log.d("ALUMNOS", String.valueOf(alumnos.size()));
+                progress.dismiss();
+                SnackbarHelper.showSnackbar ( v, "Asistencias cargadas correctamente", true);
+                btnCargar.setEnabled ( false );
+            }
+        }, 0);
     }
 
     private void activarControles () {
