@@ -142,6 +142,34 @@ public class DB extends SQLiteOpenHelper {
         return asistencias;
     }
 
+    public ArrayList<Asistencia> getAllAsistencias () {
+        SQLiteDatabase dbRead = getReadableDatabase();
+        Cursor cursor
+                = dbRead.rawQuery(
+                "SELECT ASISTENCIAS.ID, ASISTENCIAS.FECHASTR, ALUMNOS.NOMBRE, ASISTENCIAS.NOCONTROL_ALUMNO, ASISTENCIAS.ESTATUS, GRUPOS.NOMBRE " +
+                        "FROM ASISTENCIAS " +
+                        "INNER JOIN ALUMNOS  ON (ALUMNOS.NOCONTROL = ASISTENCIAS.NOCONTROL_ALUMNO) " +
+                        "INNER JOIN GRUPOS ON (GRUPOS.ID = ASISTENCIAS.ID_GRUPO)"
+                ,null
+        );
+
+        ArrayList<Asistencia> asistencias = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do{
+                asistencias.add(
+                        new Asistencia(
+                                cursor.getString ( 1 ),
+                                cursor.getString ( 2 ),
+                                cursor.getString ( 3 ),
+                                AsistenciaStatus.valueOf( cursor.getString ( 4 ) ),
+                                GrupoEnum.valueOf ( cursor.getString ( 5 ) )
+                        )
+                );
+            }while(cursor.moveToNext());
+        }
+        return asistencias;
+    }
+
     private String addFiltersAsistencias ( String noControl ) {
         String where = "";
 

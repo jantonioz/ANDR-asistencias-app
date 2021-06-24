@@ -9,7 +9,7 @@
     android:paddingTop="?attr/actionBarSize">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnCargarAlumnos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="btnOnClickLanzarCargarAlumnos"
@@ -35,4 +35,69 @@
         android:layout_height="wrap_content"
         android:onClick="btnEnviarEmailClick"
         android:text="Enviar Email" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lblTotalAlumnos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total Alumnos:"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtvCountAlumnos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 Alumnos"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lblTotalAsistencias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total Asistencias"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtvCountAsis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 Asistencias"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnLimpiarBD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="btnClickLimpiarDB"
+        android:text="Limpiar Base de datos" />
 </LinearLayout>

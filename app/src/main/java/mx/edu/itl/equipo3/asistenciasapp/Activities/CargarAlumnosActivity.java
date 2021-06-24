@@ -116,14 +116,18 @@ public class CargarAlumnosActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ArrayList<Alumno> alumnos =
-                        CargarAlumnosHelper.obtenerAlumnos ( archivoAlumnos.get ( 0 ) );
+                try {
+                    ArrayList<Alumno> alumnos =
+                            CargarAlumnosHelper.obtenerAlumnos ( archivoAlumnos.get ( 0 ) );
 
-                CargarAlumnosHelper.guardarAlumnos ( alumnos, getApplicationContext() );
+                    CargarAlumnosHelper.guardarAlumnos ( alumnos, getApplicationContext() );
 
-                progress.dismiss ();
-                SnackbarHelper.showSnackbar ( v, "Alumnos cargados correctamente", true);
-                btnCargar.setEnabled ( false );
+                    progress.dismiss ();
+                    SnackbarHelper.showSnackbar ( v, "Alumnos cargados correctamente", true);
+                    btnCargar.setEnabled ( false );
+                } catch (Exception e) {
+                    SnackbarHelper.showSnackbar ( v, "Hubo un problema al cargar los alumnos", true);
+                }
             }
         }, 0);
     }

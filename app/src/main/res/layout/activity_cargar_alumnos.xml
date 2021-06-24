@@ -26,7 +26,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:onClick="onClickSelectFolder"
-        android:text="Seleccionar carpeta"
+        android:text="Seleccionar archivo"
         app:icon="@drawable/ic_carpeta_blanco"
         app:iconGravity="start"
         app:layout_constraintStart_toStartOf="parent"

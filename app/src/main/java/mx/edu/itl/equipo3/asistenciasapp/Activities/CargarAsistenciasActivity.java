@@ -122,15 +122,19 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ArrayList<Alumno> alumnos =
-                        CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList, grupos );
-                ArrayList<Grupo> dbGrupos = CargarAsistenciasHelper.guardarGrupos ( grupos, getApplicationContext() );
+                try {
+                    ArrayList<Alumno> alumnos =
+                            CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList, grupos );
+                    ArrayList<Grupo> dbGrupos = CargarAsistenciasHelper.guardarGrupos ( grupos, getApplicationContext() );
 
-                CargarAsistenciasHelper.guardarAsistencias ( alumnos, dbGrupos, getApplicationContext() );
+                    CargarAsistenciasHelper.guardarAsistencias ( alumnos, dbGrupos, getApplicationContext() );
 
-                progress.dismiss();
-                SnackbarHelper.showSnackbar ( v, "Asistencias cargadas correctamente", true);
-                btnCargar.setEnabled ( false );
+                    progress.dismiss();
+                    SnackbarHelper.showSnackbar ( v, "Asistencias cargadas correctamente", true);
+                    btnCargar.setEnabled ( false );
+                } catch (Exception e) {
+                    SnackbarHelper.showSnackbar ( v, "Hubo un problema al cargar las asistencias", true);
+                }
             }
         }, 0);
     }
