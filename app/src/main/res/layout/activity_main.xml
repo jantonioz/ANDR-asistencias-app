@@ -9,30 +9,104 @@
     android:paddingTop="?attr/actionBarSize">
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
+        android:id="@+id/btnCargarAlumnos"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:onClick="btnOnClickLanzarCargarAlumnos"
-        android:text="Cargar Listado Alumnos" />
+        android:text="Cargar Listado Alumnos"
+        app:icon="@drawable/ic_baseline_person_24"
+        app:iconGravity="start" />
 
     <Button
         android:id="@+id/btnLanzarCargarAsistencias"
-        android:layout_width="match_parent"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:onClick="btnOnClickLanzarCargarAsistencias"
-        android:text="Cargar Asistencias" />
+        android:text="Cargar Asistencias"
+        app:icon="@drawable/ic_baseline_event_note_2424"
+        app:iconGravity="start" />
 
     <Button
-        android:id="@+id/button3"
-        android:layout_width="match_parent"
+        android:id="@+id/btnRevisarAsis"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:onClick="btnListaTotalAlumnosClick"
-        android:text="Revisar asistencias" />
+        android:text="Revisar asistencias"
+        app:icon="@drawable/ic_baseline_list_24"
+        app:iconGravity="start" />
 
     <Button
         android:id="@+id/button4"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:onClick="btnAcercaDeClick"
+        android:text="Acerca de"
+        app:iconGravity="textStart" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="btnEnviarEmailClick"
-        android:text="Enviar Email" />
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lblTotalAlumnos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total Alumnos:"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtvCountAlumnos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 Alumnos"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lblTotalAsistencias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total Asistencias:"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtvCountAsis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 Asistencias"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnLimpiarBD"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:onClick="btnClickLimpiarDB"
+        android:text="Limpiar Base de datos"
+        app:icon="@drawable/ic_borrar_blanco"
+        app:iconGravity="start" />
 </LinearLayout>

@@ -55,6 +55,15 @@ public class DB extends SQLiteOpenHelper {
         onCreate(dbWrite);
     }
 
+    public void clearAsistencias(){
+        SQLiteDatabase dbWrite = getWritableDatabase();
+        dbWrite.execSQL("DROP TABLE IF EXISTS GRUPOS");
+        dbWrite.execSQL("DROP TABLE IF EXISTS ASISTENCIAS");
+        dbWrite.execSQL(TABLE_GRUPOS);
+        dbWrite.execSQL(TABLE_ASISTENCIAS);
+    }
+
+
     public void addAlumno(String noControl, String nombre) {
         SQLiteDatabase dbWrite = getWritableDatabase();
         if( dbWrite != null ) {
@@ -124,6 +133,34 @@ public class DB extends SQLiteOpenHelper {
                     //+ addFiltersAsistencias ( noControl, idGrupo ),
                     ,null
                 );
+
+        ArrayList<Asistencia> asistencias = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do{
+                asistencias.add(
+                        new Asistencia(
+                                cursor.getString ( 1 ),
+                                cursor.getString ( 2 ),
+                                cursor.getString ( 3 ),
+                                AsistenciaStatus.valueOf( cursor.getString ( 4 ) ),
+                                GrupoEnum.valueOf ( cursor.getString ( 5 ) )
+                        )
+                );
+            }while(cursor.moveToNext());
+        }
+        return asistencias;
+    }
+
+    public ArrayList<Asistencia> getAllAsistencias () {
+        SQLiteDatabase dbRead = getReadableDatabase();
+        Cursor cursor
+                = dbRead.rawQuery(
+                "SELECT ASISTENCIAS.ID, ASISTENCIAS.FECHASTR, ALUMNOS.NOMBRE, ASISTENCIAS.NOCONTROL_ALUMNO, ASISTENCIAS.ESTATUS, GRUPOS.NOMBRE " +
+                        "FROM ASISTENCIAS " +
+                        "INNER JOIN ALUMNOS  ON (ALUMNOS.NOCONTROL = ASISTENCIAS.NOCONTROL_ALUMNO) " +
+                        "INNER JOIN GRUPOS ON (GRUPOS.ID = ASISTENCIAS.ID_GRUPO)"
+                ,null
+        );
 
         ArrayList<Asistencia> asistencias = new ArrayList<>();
         if(cursor.moveToFirst()){

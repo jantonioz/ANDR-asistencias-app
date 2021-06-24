@@ -14,7 +14,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AsistenciasApp">
-        <activity android:name=".Activities.DetallesAlumnoActivity"></activity>
+        <activity android:name=".Activities.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Activities.AcercaDeActivity" />
+        <activity android:name=".Activities.DetallesAlumnoActivity" />
         <activity android:name=".Activities.ListaTotalAlumnosActivity" />
         <activity android:name=".Activities.CargarAlumnosActivity" />
         <activity android:name=".Activities.CargarAsistenciasActivity">
@@ -30,11 +38,6 @@
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

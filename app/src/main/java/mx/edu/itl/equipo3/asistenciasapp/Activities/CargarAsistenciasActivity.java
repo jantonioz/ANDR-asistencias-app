@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,21 +19,22 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import mx.edu.itl.equipo3.asistenciasapp.Adapters.AdapterListaArchivos;
+import mx.edu.itl.equipo3.asistenciasapp.Helpers.SnackbarHelper;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Alumno;
 import mx.edu.itl.equipo3.asistenciasapp.Helpers.CargarAsistenciasHelper;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.Grupo;
 import mx.edu.itl.equipo3.asistenciasapp.Objects.InfoArchivo;
 import mx.edu.itl.equipo3.asistenciasapp.R;
+import mx.edu.itl.equipo3.asistenciasapp.SQLite.DB;
 
 
 public class CargarAsistenciasActivity extends AppCompatActivity {
-    public final static int CARGAR_ASISTENCIAS_CODE = 101;
-
     TextView textViewPath;
     TextView textViewTotalArchivos;
 
     Button btnLimpiar;
     Button btnCargar;
+    Button btnCargarAsisSelectFolder;
 
     RecyclerView cargaAsisRecyclerView;
 
@@ -45,14 +48,20 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cargar_asistencias);
         Objects.requireNonNull(getSupportActionBar()).hide();
+        Intent intent = this.getIntent();
+        Bundle extra = intent.getExtras();
+
+        int enableCargarAsisFolder = extra.getInt("totalAsistencias");
 
         textViewPath = findViewById ( R.id.txtvCargarAsisPath);
         textViewTotalArchivos = findViewById ( R.id.txtvCargarAsisCount);
 
         btnLimpiar = findViewById ( R.id.btnCargarAsisLimpiar);
         btnCargar = findViewById ( R.id.btnCargarAsisCargar);
+        btnCargarAsisSelectFolder = findViewById( R.id.btnCargarAsisSelectFolder );
 
         cargaAsisRecyclerView = findViewById ( R.id.recyclerViewCargarAsis);
+        btnCargarAsisSelectFolder.setEnabled(enableCargarAsisFolder > 0 ? false : true );
     }
 
     public void onClickAtras ( View v ) {
@@ -101,17 +110,34 @@ public class CargarAsistenciasActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged ();
         textViewPath.setText ( "" );
         textViewTotalArchivos.setText ( "0 Archivos" );
-        desactivarControles ();
+        desactivarControles();
+        DB db = new DB(getApplicationContext());
+        db.clearAsistencias();
     }
 
     public void onClickCargar ( View v ) {
-        ArrayList<Alumno> alumnos =
-            CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList, grupos );
+        ProgressDialog progress;
+        progress = ProgressDialog.show(this, "Cargando Asistencias",
+                "Se están procesando " + infoArchivoArrayList.size() + " archivos", true);
 
-        ArrayList<Grupo> dbGrupos = CargarAsistenciasHelper.guardarGrupos ( grupos, getApplicationContext() );
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<Alumno> alumnos =
+                            CargarAsistenciasHelper.obtenerAsistenciasPorAlumno ( infoArchivoArrayList, grupos );
+                    ArrayList<Grupo> dbGrupos = CargarAsistenciasHelper.guardarGrupos ( grupos, getApplicationContext() );
 
-        CargarAsistenciasHelper.guardarAsistencias ( alumnos, dbGrupos, getApplicationContext() );
-        Log.d("ALUMNOS", String.valueOf(alumnos.size()));
+                    CargarAsistenciasHelper.guardarAsistencias ( alumnos, dbGrupos, getApplicationContext() );
+
+                    progress.dismiss();
+                    SnackbarHelper.showSnackbar ( v, "Asistencias cargadas correctamente", true);
+                    btnCargar.setEnabled ( false );
+                } catch (Exception e) {
+                    SnackbarHelper.showSnackbar ( v, "Hubo un problema al cargar las asistencias", true);
+                }
+            }
+        }, 0);
     }
 
     private void activarControles () {

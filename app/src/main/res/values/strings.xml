@@ -3,9 +3,12 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string-array name="materias_array">
-        <item>LA2</item>
-        <item>TAP</item>
-        <item>ANDR</item>
-    </string-array>
+    <string name="cargarlbl">Cargar</string>
+    <string name="atraslbl">Atrás</string>
+    <string name="limpiarlbl">Limpiar</string>
+    <string name="seleccionar_carpetalbl">Seleccionar carpeta</string>
+    <string name="selecciona_asistenciaslbl">Selecciona Asistencias</string>
+    <string name="pathlbl">PATH</string>
+    <string name="archivoslbl">0 Archivos</string>
+    <string name="cargandoLbl">Cargando</string>
 </resources>

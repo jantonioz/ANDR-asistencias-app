@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Selecciona Asistencias"
+        android:text="@string/selecciona_asistenciaslbl"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +25,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:onClick="onClickSelectFolder"
-        android:text="Seleccionar carpeta"
+        android:text="@string/seleccionar_carpetalbl"
         app:icon="@drawable/ic_carpeta_blanco"
         app:iconGravity="start"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
         android:layout_marginBottom="8dp"
         android:enabled="false"
         android:onClick="onClickLimpiar"
-        android:text="Limpiar"
+        android:text="@string/limpiarlbl"
         app:icon="@drawable/ic_borrar_blanco"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -64,7 +64,7 @@
         android:layout_marginTop="8dp"
         android:background="@android:color/white"
         android:onClick="onClickAtras"
-        android:text="Atrás"
+        android:text="@string/atraslbl"
         app:icon="@drawable/ic_regresar_blanco"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -77,10 +77,10 @@
         android:layout_marginBottom="8dp"
         android:enabled="false"
         android:onClick="onClickCargar"
-        android:text="Cargar"
+        android:text="@string/cargarlbl"
         app:icon="@drawable/ic_ok_blanco"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/txtvCargarAsisPath"
@@ -88,7 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        android:text="PATH"
+        android:text="@string/pathlbl"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnCargarAsisSelectFolder" />
 
@@ -98,8 +98,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:text="0 Archivos"
+        android:text="@string/archivoslbl"
         app:layout_constraintBottom_toTopOf="@+id/btnCargarAsisCargar"
         app:layout_constraintEnd_toEndOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
